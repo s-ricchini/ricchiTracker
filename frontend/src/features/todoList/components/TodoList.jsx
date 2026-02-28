@@ -1,8 +1,10 @@
 import { useState } from "react";
 import TaskList from "./TaskList";
+import AddTaskForm from "./AddTaskForm";
+
 
 function TodoList(){
-    //array de perueba
+    //array de perueba posteriormente hace fetch a db mysql
     const todosHoy = [
         {
             id: 1,
@@ -38,31 +40,31 @@ function TodoList(){
 
     const todosManana = [
         {
-            id: 6,
+            id: 1,
             title: "Implementar endpoint de folders",
             completed: false,
             created_at: "2026-02-27"
         },
         {
-            id: 7,
+            id: 2,
             title: "Conectar frontend con backend (mock)",
             completed: false,
             created_at: "2026-02-27"
         },
         {
-            id: 8,
+            id: 3,
             title: "Agregar filtro por carpeta",
             completed: false,
             created_at: "2026-02-27"
         },
         {
-            id: 9,
+            id: 4,
             title: "Optimizar estructura de features",
             completed: false,
             created_at: "2026-02-27"
         },
         {
-            id: 10,
+            id: 5,
             title: "Revisar diseño de base de datos",
             completed: false,
             created_at: "2026-02-27"
@@ -80,13 +82,36 @@ function TodoList(){
     const [selected,setSelected] = useState('today')
 
 
+    function handleNewTask(newTask){
+
+        if(selected === "today"){
+            setToday(today => [...today,{
+                id: (today.length + 1), //este id se va a cambiar, se va a poner el inserted id que te devuelva la db
+                title: newTask.title,
+                completed: false,
+                created_at: "2026-02-26" //poner la fecha real cuando se use db
+
+            }])
+        } else{
+            setTomorow( tomorrow => [...tomorrow,{
+                id: (tomorrow.length + 1), //este id se va a cambiar, se va a poner el inserted id que te devuelva la db
+                title: newTask.title,
+                completed: false,
+                created_at: "2026-02-26" //poner la fecha real cuando se use db
+
+            }])
+        }
+
+    }
+
     return(
         <div>
             <div className="bg-white flex gap-4 text-md ">
-                <button onClick={() => {setSelected('today')}}>Today</button>
-                <button onClick={() => {setSelected('tomorrow')}}>Tomorrow</button>
+                <button onClick={() => {setSelected('today')}} className={`${selected === "today" ? "text-orange-500": ''}`}>Today</button>
+                <button onClick={() => {setSelected('tomorrow')}} className={`${selected === "tomorrow" ? "text-orange-500": ''}`}>Tomorrow</button>
             </div>
             {selected === "today" ? <TaskList tasks={today} setTasks={setToday}></TaskList> : <TaskList tasks={tomorrow} setTasks={setTomorow}></TaskList> }
+            <AddTaskForm handleNewTask = {handleNewTask}></AddTaskForm>
         </div>
         
     );
