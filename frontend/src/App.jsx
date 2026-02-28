@@ -1,14 +1,12 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
 import './App.css'
+import TodoList from './features/todoList/components/TodoList'
+
 
 function App() {
   return (
     <div>
-      <h1 className='bg-amber-800'>
-        HOLA
-      </h1>
+      <TodoList></TodoList>
     </div>
   )
 }
