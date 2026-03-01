@@ -30,7 +30,7 @@ function TaskList({tasks,setTasks}){
 
 
     return(
-        <div className="w-11/12 mx-auto">{list}</div>
+        <div className=" ml-5 mr-2">{list}</div>
     );
 
 }
