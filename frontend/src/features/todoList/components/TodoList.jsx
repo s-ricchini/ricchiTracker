@@ -105,7 +105,7 @@ function TodoList(){
     }
 
     return(
-        <div className="w-1/2 bg-white p-5 space-y-4">
+        <div className=" bg-white p-5 space-y-4">
             <div className="bg-white flex gap-4 text-md text-xl ">
                 <button onClick={() => {setSelected('today')}} className={`hover:cursor-pointer ${selected === "today" ? "text-orange-500": ''}`}>Today</button>
                 <button onClick={() => {setSelected('tomorrow')}} className={`hover:cursor-pointer ${selected === "tomorrow" ? "text-orange-500": ''}`}>Tomorrow</button>
