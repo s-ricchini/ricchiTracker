@@ -6,7 +6,7 @@ import Pomodoro from './features/pomodoro/components/Pomodoro'
 
 function App() {
   return (
-    <div className='flex gap-5' >
+    <div className='flex gap-5 m-5' >
       <div className='w-3/5'>
         <TodoList></TodoList>
       </div>
