@@ -19,8 +19,10 @@ function AddTaskForm({handleNewTask}){
             <button type="submit">
                 <CirclePlus color={'black'} hoverColor={"orange"} size={14}></CirclePlus>    
             </button>    
+    
         </form>
 
+    
 
 
     )
