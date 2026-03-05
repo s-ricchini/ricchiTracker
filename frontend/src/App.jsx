@@ -8,6 +8,7 @@ import SideBar from './features/sideBar/SideBar'
 function App() {
   return (
     <div className='flex h-screen'>
+      <h2>HOLA</h2>
       <div className='w-1/8 bg-white'>
         <SideBar></SideBar>
       </div>  
