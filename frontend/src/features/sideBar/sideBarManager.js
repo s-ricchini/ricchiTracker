@@ -37,6 +37,10 @@ class SideBarManager{
         
     }
 
+    getTree(){
+        return this.tree
+    }
+
     //metodo para encontrar por id
     findById(id){
         return this.nodeMap[id];

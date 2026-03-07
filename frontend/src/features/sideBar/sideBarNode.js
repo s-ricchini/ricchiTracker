@@ -14,6 +14,22 @@ class SidebarNode {
     return this.type === 'folder';
   }
 
+  getId(){
+    return this.id
+  }
+
+  hasChilds(){
+    return this.children.length > 0
+  }
+
+  getChilds(){
+    return this.children
+  }
+
+  getTitle(){
+    return this.name
+  }
+
   //añadir un hijo
   addChild(node) {
     this.children.push(node);
@@ -21,5 +37,6 @@ class SidebarNode {
     this.children.sort((a, b) => a.position - b.position)
   }
 }
+
 
 export default SidebarNode
