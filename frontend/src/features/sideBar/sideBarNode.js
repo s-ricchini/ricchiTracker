@@ -17,6 +17,8 @@ class SidebarNode {
   //añadir un hijo
   addChild(node) {
     this.children.push(node);
+    //ordeno los hijos por posicion
+    this.children.sort((a, b) => a.position - b.position)
   }
 }
 
