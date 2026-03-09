@@ -42,6 +42,15 @@ class SidebarNode {
     return this.name
   }
 
+  getColor(){
+    if(this.color){
+      return this.color
+    }
+    
+    //color por defecto
+    return 'black'
+  }
+
   //añadir un hijo
   addChild(node) {
     this.children.push(node);

@@ -1,11 +1,13 @@
 import SideBarManager from "./sideBarManager"
 import SideBaritem from "./SideBarItem"
+import MenuBars from "../../assets/icons/MenuBars"
+
 
 import items from "../../data/itemsSidebar"
 import { useState,useMemo } from "react"
 
 
-function SideBar(){
+function OpenSideBar({toggleSideBar}){
 
     //en la futura implementacion primero hago una query para recuperar la rowData
 
@@ -51,15 +53,26 @@ function SideBar(){
 
     return(
         <div className="bg-white">
-            <p>Side Bar</p>
+            
+            <div className="flex text-xl gap-2 items-center" >
+                <div className="cursor-pointer" onClick={toggleSideBar} >
+                    <MenuBars color={'black'} hoverColor={'orange'}></MenuBars>
+                </div>
+                <p>My Blogs</p>
+            </div>
+    
             <div>
                 {manager.getTree().map(elem => <SideBaritem key={elem.getId()} nodo={elem} openFile={openFile} deleteFile = {deleteFile}></SideBaritem>)}
             </div>
-            
+            <div className=" flex flex-col items-start ml-4">
+                <button>New Folder</button>
+                <button>New File</button>
+            </div>
+
         </div>
     )
 
 
 }
 
-export default SideBar
+export default OpenSideBar
