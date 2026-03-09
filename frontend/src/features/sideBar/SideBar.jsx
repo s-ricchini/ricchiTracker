@@ -1,7 +1,7 @@
 import SideBarManager from "./sideBarManager"
 import SideBaritem from "./SideBarItem"
 import MenuBars from "../../assets/icons/MenuBars"
-
+import ContextMenu from "./ContextMenu"
 
 import items from "../../data/itemsSidebar"
 import { useState,useMemo } from "react"
@@ -16,6 +16,24 @@ function OpenSideBar({toggleSideBar}){
 
     //uso memo para que solo se calcule el arbol si cambia la data
     const manager = useMemo(() => {return new SideBarManager(rowData)},[rowData])
+
+    //manejo del menu
+    const [contextMenu,setContextMenu] = useState(false);
+    const [menuInfo,setMenuInfo] = useState({id:'',x:0,y:0})
+
+    function handleMenu(id,x,y){
+
+        //si clickeo 2 veces en el mismo archivo se cierra
+        if(menuInfo.id === id){
+            setContextMenu(prev => !prev)
+            return
+        }
+
+        setContextMenu(true)
+        const newInfo = {id:id,x:x + 20,y:y}
+        setMenuInfo(newInfo);
+        
+    }
 
 
     function openFile(id){
@@ -62,13 +80,13 @@ function OpenSideBar({toggleSideBar}){
             </div>
     
             <div>
-                {manager.getTree().map(elem => <SideBaritem key={elem.getId()} nodo={elem} openFile={openFile} deleteFile = {deleteFile}></SideBaritem>)}
+                {manager.getTree().map(elem => <SideBaritem key={elem.getId()} nodo={elem} openFile={openFile} deleteFile = {deleteFile} handleMenu={handleMenu}></SideBaritem>)}
             </div>
             <div className=" flex flex-col items-start ml-4">
                 <button>New Folder</button>
                 <button>New File</button>
             </div>
-
+            {contextMenu && <ContextMenu id={menuInfo.id} x={menuInfo.x} y={menuInfo.y}></ContextMenu>}
         </div>
     )
 

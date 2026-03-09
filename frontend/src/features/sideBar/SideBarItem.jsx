@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 
-function SideBaritem({nodo,openFile,deleteFile}){ //openFile es una funcion que se encarga de hacer el fetch un nivel mas arriba de componente
+function SideBaritem({nodo,openFile,deleteFile,handleMenu}){ //openFile es una funcion que se encarga de hacer el fetch un nivel mas arriba de componente
   const [isOpen,setIsOpen] = useState(false);
 
   const handleClick = () => {
@@ -21,7 +21,14 @@ function SideBaritem({nodo,openFile,deleteFile}){ //openFile es una funcion que 
   const handleRightClick = (e) => {
     e.preventDefault()
     console.log('Click derecho')
-    console.log(e)
+    const x = parseInt(e.clientX);
+    const y = parseInt(e.clientY);
+    
+    console.log("x: " + x)
+    console.log("y: " + y)
+
+    handleMenu(nodo.getId(),x,y)
+
   }
 
   function TrashIcon({color,hoverColor}){
@@ -78,12 +85,13 @@ function SideBaritem({nodo,openFile,deleteFile}){ //openFile es una funcion que 
         </span>
         
       </div>
-      {(nodo.isFolder() && isOpen && nodo.hasChilds()) &&  nodo.getChilds().map(child => <SideBaritem  key= {child.getId()} nodo={child} openFile={openFile} deleteFile={deleteFile}></SideBaritem>)}
+      {(nodo.isFolder() && isOpen && nodo.hasChilds()) &&  nodo.getChilds().map(child => <SideBaritem  key= {child.getId()} nodo={child} openFile={openFile} deleteFile={deleteFile} handleMenu={handleMenu}></SideBaritem>)}
       
-
+      
     </div>
 
   )
+
 
 }
 
