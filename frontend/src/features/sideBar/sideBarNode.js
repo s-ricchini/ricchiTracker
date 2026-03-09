@@ -26,6 +26,18 @@ class SidebarNode {
     return this.children
   }
 
+  getChildsId(){
+    if (this.children.length === 0){
+      return []
+    }
+
+    //consigo todos los id
+    let ids = [];
+    this.children.forEach(child => ids.push(child.getId()))
+    return ids
+    
+  }
+
   getTitle(){
     return this.name
   }
