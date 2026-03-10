@@ -48,7 +48,7 @@ class SidebarNode {
     }
     
     //color por defecto
-    return 'black'
+    return '#000000'
   }
 
   //añadir un hijo

@@ -4,7 +4,7 @@ import MenuBars from "../../assets/icons/MenuBars"
 import ContextMenu from "./ContextMenu"
 
 import items from "../../data/itemsSidebar"
-import { useState,useMemo } from "react"
+import { useState,useMemo,useEffect } from "react"
 
 
 function OpenSideBar({toggleSideBar}){
@@ -19,22 +19,27 @@ function OpenSideBar({toggleSideBar}){
 
     //manejo del menu
     const [contextMenu,setContextMenu] = useState(false);
-    const [menuInfo,setMenuInfo] = useState({id:'',x:0,y:0})
+    const [menuInfo,setMenuInfo] = useState({nodo:null,x:0,y:0})
 
     function handleMenu(id,x,y){
 
         //si clickeo 2 veces en el mismo archivo se cierra
-        if(menuInfo.id === id){
+        if(menuInfo.nodo && menuInfo.nodo.getId() === id){
             setContextMenu(prev => !prev)
             return
         }
 
         setContextMenu(true)
-        const newInfo = {id:id,x:x + 20,y:y}
+        //busco el nodo
+        const nodoBuscado = manager.findById(id)
+        const newInfo = {nodo: nodoBuscado,x:x + 20,y:y}
         setMenuInfo(newInfo);
         
     }
 
+    function closeMenu(){
+        setContextMenu(false)
+    }
 
     function openFile(id){
         const nodoBuscado =manager.findById(id)
@@ -68,6 +73,27 @@ function OpenSideBar({toggleSideBar}){
 
     }
 
+    function changeColor(id,newColor){
+        const newData = rowData.map(item => {
+            if(item.id === id){
+                return {...item, color:newColor}
+            }
+            return item
+        })
+        setRowData(newData);
+
+        //tendria que hacer un fetch  PATCH para actualizar la base de datos
+
+    }
+
+    const actions = {
+        openFile:openFile,
+        deleteFile: deleteFile,
+        changeColor: changeColor,
+        handleMenu:handleMenu
+
+
+    }
 
     return(
         <div className="bg-white">
@@ -80,13 +106,13 @@ function OpenSideBar({toggleSideBar}){
             </div>
     
             <div>
-                {manager.getTree().map(elem => <SideBaritem key={elem.getId()} nodo={elem} openFile={openFile} deleteFile = {deleteFile} handleMenu={handleMenu}></SideBaritem>)}
+                {manager.getTree().map(elem => <SideBaritem key={elem.getId()} nodo={elem} actions={actions}></SideBaritem>)}
             </div>
             <div className=" flex flex-col items-start ml-4">
                 <button>New Folder</button>
                 <button>New File</button>
             </div>
-            {contextMenu && <ContextMenu id={menuInfo.id} x={menuInfo.x} y={menuInfo.y}></ContextMenu>}
+            {contextMenu && <ContextMenu nodo={menuInfo.nodo} x={menuInfo.x} y={menuInfo.y} closeMenu = {closeMenu} actions = {actions}></ContextMenu>}
         </div>
     )
 
