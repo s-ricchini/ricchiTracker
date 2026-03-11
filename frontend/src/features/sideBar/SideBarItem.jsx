@@ -14,10 +14,6 @@ function SideBaritem({nodo,actions}){ //openFile es una funcion que se encarga d
 
   }
 
-  const handleDelete = () => {
-    actions.deleteFile(nodo.getId());
-  }
-
   const handleRightClick = (e) => {
     e.preventDefault()
     console.log('Click derecho')

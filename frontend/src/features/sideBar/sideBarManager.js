@@ -11,6 +11,10 @@ class SideBarManager{
     createTree(){
         const root = []
         
+        if (this.dataPlana.length <= 0){
+            return []
+        }
+
         //creo el mapa id : nodo O(n)
         this.dataPlana.forEach(element => {
             this.nodeMap[element.id] = new SidebarNode(element)            
@@ -20,7 +24,7 @@ class SideBarManager{
         //creo las conecciones de padre/hijo O(n)
         this.dataPlana.forEach(element => {
             //es el hijo de alguien
-            if (element.parent_id){
+            if (element.parent_id !== null && element.parent_id !== undefined){
                 const nodoPadre = this.nodeMap[element.parent_id];
                 const nodoHijo = this.nodeMap[element.id];
 
@@ -54,23 +58,24 @@ class SideBarManager{
 
     //consigo todos los id hijos de un nodo 
     // obeservacion: antes de llamar a esta funcion reseta los searchedIdChilds con su metodo 
-    getAllChildsId(id){
-        
-        let ids = []
+    getAllChildsId(id) {
+        let ids = [];
         let nodoActual = this.findById(id);
 
-        if(nodoActual.hasChild()){
-            //pushea todos los id a la variable global
-            ids.push(...nodoActual.getChildsId())
-            this.searchedChildId.push(...ids)    
-                
-            //recursividad mientras cada nodo tenga hijos se sigue ejecutando hasta encontrar todos los nodos
-            ids.forEach(id => this.getAllChildsId(id))
+        // Si el nodo existe y tiene hijos
+        if (nodoActual && nodoActual.hasChilds()) {
+            const hijosDirectos = nodoActual.getChildsId();
             
+            ids.push(...hijosDirectos);
+
+            hijosDirectos.forEach(hijoId => {
+                const idsDescendientes = this.getAllChildsId(hijoId); 
+                ids.push(...idsDescendientes); 
+            });
         }
 
-        return
-        
+        // retorna la lista completa de descendientes
+        return ids;
     }
 
 }

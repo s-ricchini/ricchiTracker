@@ -15,11 +15,14 @@ function OpenSideBar({toggleSideBar}){
     const [rowData,setRowData] = useState(items)
 
     //uso memo para que solo se calcule el arbol si cambia la data
-    const manager = useMemo(() => {return new SideBarManager(rowData)},[rowData])
+    const manager = useMemo(() => {
+        return new SideBarManager(rowData || []) },[rowData])
 
     //manejo del menu
     const [contextMenu,setContextMenu] = useState(false);
     const [menuInfo,setMenuInfo] = useState({nodo:null,x:0,y:0})
+
+    console.log(manager.getTree().length)
 
     function handleMenu(id,x,y){
 
@@ -51,13 +54,13 @@ function OpenSideBar({toggleSideBar}){
     }
 
     function deleteFile(id){
-        
+        closeMenu()
+
         //recupero el nodo que quiero borrar
         const nodoAborrar = manager.findById(id)
         
         if(nodoAborrar.isFolder()){
             //busco todos los id del arbol que tenga como raiz el nodo a borrar
-            manager.resetSerchedChildsId()
             const allIds = manager.getAllChildsId(id)
             allIds.push(id)
 
@@ -90,7 +93,8 @@ function OpenSideBar({toggleSideBar}){
         openFile:openFile,
         deleteFile: deleteFile,
         changeColor: changeColor,
-        handleMenu:handleMenu
+        handleMenu:handleMenu,
+        closeMenu:closeMenu,
 
 
     }
@@ -112,7 +116,7 @@ function OpenSideBar({toggleSideBar}){
                 <button>New Folder</button>
                 <button>New File</button>
             </div>
-            {contextMenu && <ContextMenu nodo={menuInfo.nodo} x={menuInfo.x} y={menuInfo.y} closeMenu = {closeMenu} actions = {actions}></ContextMenu>}
+            {contextMenu && <ContextMenu nodo={menuInfo.nodo} x={menuInfo.x} y={menuInfo.y}  actions = {actions}></ContextMenu>}
         </div>
     )
 
