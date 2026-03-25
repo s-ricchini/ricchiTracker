@@ -1,6 +1,8 @@
 import { useState } from "react"
-import ColorPicker from "./ColorPicker"
+import { useForm } from "react-hook-form"
 
+import ColorPicker from "./ColorPicker"
+import ShowColor from "./ShowColor"
 
 /*
     ejemplo del item
@@ -15,25 +17,41 @@ import ColorPicker from "./ColorPicker"
 */
 
 
-function NewItem(){
-    
-    const [name,setName] = useState('')
-    const [type,setType] = useState('file')
-    const [color,setColor] = useState('')
+function NewItem({type,handleCreation}){
 
-    const handleChange = (e) => {
-        e.preventDefault();
-        console.log(e)
+    const [color,setColor] = useState("#000000")
+    const [showPicker,setShowPicker] = useState(false)
+
+    function handleColor(newColor){
+        setColor(newColor)
+        setTimeout(() => {setShowPicker(false)},100)
     }
 
-    return(
-        <form>
-            <input onChange={handleChange} type="text" value={name} placeholder="Name"></input>
-            <select>
-            </select>
-        </form>
+    const {register,handleSubmit,formState: { errors }} = useForm()
 
-    )
+    
+    
+    const onSubmit = (data) => {
+        handleCreation(data.name,type,color)
+    }
+
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="ml-2">
+        <div>
+            <div className="flex">
+                <input type="text" placeholder="Name"{...register("name", { required: true })} />
+                {!showPicker && <input type="submit" value={"Create"}/>}
+            </div>
+            {errors.name && <span>This field is required</span>}
+        </div>
+        <ShowColor color={color} text={"Current Color"}></ShowColor>
+        <button type="button" onClick={() => setShowPicker(prev => !prev)}>Choose Color</button>
+        { showPicker && <ColorPicker handleChangeColor={handleColor}></ColorPicker>}
+        
+    </form>
+
+)
 
 }
 

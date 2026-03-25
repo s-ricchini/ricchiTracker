@@ -14,6 +14,10 @@ class SidebarNode {
     return this.type === 'folder';
   }
 
+  getParentId(){
+    return this.parentId;
+  }
+
   getId(){
     return this.id
   }

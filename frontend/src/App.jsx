@@ -5,7 +5,7 @@ import Pomodoro from "./features/pomodoro/components/Pomodoro";
 
 import OpenSideBar from "./features/sideBar/SideBar";
 import ClosedSideBar from "./features/sideBar/ClosedSideBar";
-import ColorPicker from "./features/sideBar/ColorPicker";
+
 
 function App() {
   const [isOpen, setIsOpen] = useState(true);

@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form"
 import { useState } from "react"
 import ColorPicker from "./ColorPicker"
+import NewItem from "./NewItem"
 
 
 function ContextMenu({nodo,x,y,actions}){
@@ -12,30 +13,47 @@ function ContextMenu({nodo,x,y,actions}){
     const [isNewFolder,setIsNewFolder] = useState(false)
     const [isNewFile,setIsNewFile] = useState(false)
 
-    //nombre actualizable para el rename
+    //estados para informacion del menu
     const [name,setName] = useState(nodo.getTitle())
-
-    console.log(nodo.getTitle())
-
+    const [currentColor,setCurrentColor] = useState(nodo.getColor())
 
     function handleChangeColor(color){
         actions.changeColor(nodo.getId(),color)
+        setCurrentColor(color)
+        
+        //cierro la ventana
+        setTimeout(() => {setIsChangeColor(false)},200)
     }
 
     function handleDelete(){
         actions.deleteFile(nodo.getId())
+
+        //cierro la ventana
+        setTimeout(() => {setIsDelete(false)},200)
     }
 
     function handleRename(newName){
         actions.renameItem(nodo.getId(),newName);
         setName(newName);
+
+        //cierro ventana
+        setTimeout(() => {setIsRename(false)},200)
     }
 
+    function handleCreateItem(FileName,type,color){
+        console.log(FileName)
+        actions.createItem(FileName,type,color,nodo.getId());
+
+        setTimeout(() => {
+            setIsNewFile(false)
+            setIsNewFolder(false)
+        },100)
+    }
 
     return(
         <div style={{position:'fixed', top: y, left:x, zIndex:1000}} className='bg-white border border-gray-300 w-lg p-2 space-y-2'>
             <div className="flex border-b pb-2 border-gray-300 gap-1.5 items-center">
-                {nodo.isFolder() ? <FolderClosed color={nodo.getColor()}></FolderClosed> : <FileIcon color={nodo.getColor()}></FileIcon>}
+                {nodo.isFolder() ? <FolderClosed color={currentColor}></FolderClosed> : <FileIcon color={nodo.getColor()}></FileIcon>}
                 <p className="text-xl">{name}</p>
 
             </div>
@@ -51,8 +69,12 @@ function ContextMenu({nodo,x,y,actions}){
                     {isDelete && <DeleteConfimationForm title = {nodo.getTitle()} isFolder = {nodo.isFolder()} handleDelete={handleDelete} closeMenu={actions.closeMenu}></DeleteConfimationForm>}
                 </div>
                 {nodo.isFolder() && <div className="flex flex-col items-start">
-                    <button className="text-lg cursor-pointer"> New Folder</button>
-                    <button className="text-lg cursor-pointer"> New File</button>
+                    <button className="text-lg cursor-pointer" onClick={() => setIsNewFolder(prev => !prev)}> New Folder</button>
+                    {isNewFolder && <NewItem type={'folder'}  handleCreation={handleCreateItem}></NewItem>}
+                    
+                    <button className="text-lg cursor-pointer" onClick={() => setIsNewFile(prev => !prev)}> New File</button>
+                    {isNewFile && <NewItem type={'file'} handleCreation={handleCreateItem}></NewItem>}
+                    
                 </div>}
             </div>
         </div>

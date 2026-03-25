@@ -5,6 +5,7 @@ import ContextMenu from "./ContextMenu"
 
 import items from "../../data/itemsSidebar"
 import { useState,useMemo,useEffect } from "react"
+import NewItem from "./NewItem"
 
 //hola
 
@@ -22,6 +23,9 @@ function OpenSideBar({toggleSideBar}){
     //manejo del menu
     const [contextMenu,setContextMenu] = useState(false);
     const [menuInfo,setMenuInfo] = useState({nodo:null,x:0,y:0})
+
+    const [newRootFile,setNewRootFile] = useState(false)
+    const [newRootFolder,setNewRootFolder] = useState(false)
 
     console.log(manager.getTree().length)
 
@@ -106,16 +110,32 @@ function OpenSideBar({toggleSideBar}){
 
     }
 
+    function createItem(name,type,color,parentId){
+        const newItem = {
+            id:crypto.randomUUID(),
+            name:name,
+            type:type,
+            color:color,
+            parent_id:parentId,
+            position:100,
+        }
+        
+        const newData = [...rowData,newItem];
+        setRowData(newData)
 
+        //aca se accede a la base de datos
+    }
+       
+    
 
     const actions = {
         openFile:openFile,
         renameItem:renameItem,
         deleteFile: deleteFile,
+        createItem:createItem,
         changeColor: changeColor,
         handleMenu:handleMenu,
         closeMenu:closeMenu,
-
 
     }
 
@@ -133,13 +153,45 @@ function OpenSideBar({toggleSideBar}){
                 {manager.getTree().map(elem => <SideBaritem key={elem.getId()} nodo={elem} actions={actions}></SideBaritem>)}
             </div>
             <div className=" flex flex-col items-start ml-4">
-                <button>New Folder</button>
-                <button>New File</button>
+                <button  className = "hover:cursor-pointer" onClick={() => {setNewRootFolder(prev => !prev)}}>New Folder</button>
+                { newRootFolder && <CreateRootFolder createItem={createItem} setEstado={setNewRootFolder}></CreateRootFolder>}
+                
+                <button  className = "hover:cursor-pointer" onClick={() => {setNewRootFile(prev => !prev)}}>New File</button>
+                { newRootFile && <CreateRootFile createItem={createItem} setEstado={setNewRootFile}></CreateRootFile>}
+                
             </div>
             {contextMenu && <ContextMenu key={menuInfo.nodo.getTitle()} nodo={menuInfo.nodo} x={menuInfo.x} y={menuInfo.y}  actions = {actions}></ContextMenu>}
         </div>
     )
 
+
+}
+
+function CreateRootFolder({createItem,setEstado}){
+    
+    function handleCreateRootFolder(FileName,type,color){
+        console.log(FileName)
+        createItem(FileName,'folder',color,null);
+        setEstado(false);
+    }
+
+    return(
+        <NewItem type={'folder'} handleCreation={handleCreateRootFolder}></NewItem>
+    )
+
+}
+
+function CreateRootFile({createItem,setEstado}){
+    
+    function handleCreateRootFolder(FileName,type,color){
+        console.log(FileName)
+        createItem(FileName,'file',color,null);
+        setEstado(false);
+    }
+
+    return(
+        <NewItem type={'file'} handleCreation={handleCreateRootFolder}></NewItem>
+    )
 
 }
 
