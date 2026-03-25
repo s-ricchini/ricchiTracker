@@ -1,33 +1,41 @@
-import { useForm } from "react-hook-form"
+import { useState } from "react"
+import ColorPicker from "./ColorPicker"
 
 
-function AddItemForm({handleNewItem}){
+/*
+    ejemplo del item
+  {
+    "id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+    "name": "Programación",
+    "type": "folder",
+    "color": "#50E3C2",
+    "parent_id": null,
+    "position": 1
+  },
+*/
+
+
+function NewItem(){
     
-    const {register,handleSubmit,formState: {errors}} = useForm()
+    const [name,setName] = useState('')
+    const [type,setType] = useState('file')
+    const [color,setColor] = useState('')
 
-    const OnSubmit = (data) => {
-        handleNewTask(data)
+    const handleChange = (e) => {
+        e.preventDefault();
+        console.log(e)
     }
 
     return(
-        
-        <form onSubmit={handleSubmit(OnSubmit)} className="flex items-center gap-2" >
-            <div className="flex flex-col w-full">
-                <input className="text-xl border-3 p-2 rounded-xl hover:border-amber-500" type="text" {...register("title", {required:true})}placeholder="New task"></input>
-                {errors.title && <span className="text-sm text-red-700">This field is required</span>}
-            </div>
-            <button type="submit">
-                <CirclePlus color={'black'} hoverColor={"orange"} size={14}></CirclePlus>    
-            </button>    
-    
+        <form>
+            <input onChange={handleChange} type="text" value={name} placeholder="Name"></input>
+            <select>
+            </select>
         </form>
-
-    
-
 
     )
 
 }
 
 
-export default AddTaskForm
+export default NewItem

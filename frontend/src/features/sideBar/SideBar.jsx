@@ -90,8 +90,27 @@ function OpenSideBar({toggleSideBar}){
 
     }
 
+    function renameItem(id,newName){
+        const newData = rowData.map(item => {
+            if(item.id === id){
+                const newItem = {...item, name:newName};
+                return newItem
+            } 
+            return item
+            
+        })
+        setRowData(newData);
+
+        //hay que actualizar base de datos
+
+
+    }
+
+
+
     const actions = {
         openFile:openFile,
+        renameItem:renameItem,
         deleteFile: deleteFile,
         changeColor: changeColor,
         handleMenu:handleMenu,
@@ -117,7 +136,7 @@ function OpenSideBar({toggleSideBar}){
                 <button>New Folder</button>
                 <button>New File</button>
             </div>
-            {contextMenu && <ContextMenu nodo={menuInfo.nodo} x={menuInfo.x} y={menuInfo.y}  actions = {actions}></ContextMenu>}
+            {contextMenu && <ContextMenu key={menuInfo.nodo.getTitle()} nodo={menuInfo.nodo} x={menuInfo.x} y={menuInfo.y}  actions = {actions}></ContextMenu>}
         </div>
     )
 
