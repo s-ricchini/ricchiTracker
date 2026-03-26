@@ -1,0 +1,29 @@
+###recupero todos los items del sideBar
+GET http://localHost:1234/items
+
+
+###creo un nuevo item que no sea valido
+POST http://localHost:1234/items
+Content-Type: application/json
+
+{
+    "id": "21a250f2-469b-4eb9-a9d5-8d3d6e3a7d71",
+    "name": "Paradigmas",
+    "type": "como estas?",
+    "color": "#F5A623",
+    "parent_id": null,
+    "position": 10
+}
+
+###Item valido
+POST http://localHost:1234/items
+Content-Type: application/json
+
+{
+    "id": "21a250f2-469b-4eb9-a9d5-8d3d6e3a7d71",
+    "name": "Paradigmas",
+    "type": "folder",
+    "color": "#F5A623",
+    "parent_id": null,
+    "position": 10
+}

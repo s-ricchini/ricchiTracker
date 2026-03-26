@@ -10,7 +10,8 @@ export class SideBarItemsController{
     //addItem, valida el schema de zod primero
 
     static async addItem(req,res){
-
+       const data = req.body
+       return res.status(200).json(data);
     }
 
 
