@@ -11,3 +11,8 @@ export const sideBarItemsRouter = Router()
 sideBarItemsRouter.get("/",SideBarItemsController.getAll)
 
 sideBarItemsRouter.post('/', validateSchema(itemsSideBarSchema) ,SideBarItemsController.addItem)
+
+sideBarItemsRouter.put('/' ,validateSchema(itemsSideBarSchema,true) ,SideBarItemsController.modifyItem)
+
+sideBarItemsRouter.delete('/:id' ,SideBarItemsController.deleteItem)
+
