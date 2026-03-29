@@ -14,7 +14,25 @@ function OpenSideBar({toggleSideBar}){
     //en la futura implementacion primero hago una query para recuperar la rowData
 
     //estado que sigue a la dataplana(items)
-    const [rowData,setRowData] = useState(items)
+    const [rowData,setRowData] = useState([])
+    const [isLoading,setIsLoading] = useState(true)
+    //useEffect para recuperar la data al cargar el componente
+    useEffect(() => {
+        const fetchSidebarData = async () => {
+            try {
+                setIsLoading(true);
+                const response = await fetch("http://localHost:1234/items");
+                const data = await response.json();
+                console.log(data)
+                setRowData(data);
+            } catch (error) {
+                console.error("Error recuperando los items:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchSidebarData();
+    }, []); // El array vacío asegura que solo se ejecute una vez
 
     //uso memo para que solo se calcule el arbol si cambia la data
     const manager = useMemo(() => {
@@ -110,7 +128,7 @@ function OpenSideBar({toggleSideBar}){
 
     }
 
-    function createItem(name,type,color,parentId){
+    async function createItem(name,type,color,parentId){
         const newItem = {
             id:crypto.randomUUID(),
             name:name,
@@ -120,10 +138,34 @@ function OpenSideBar({toggleSideBar}){
             position:100,
         }
         
-        const newData = [...rowData,newItem];
-        setRowData(newData)
-
+    
         //aca se accede a la base de datos
+        //Actualización optimista: Reflejamos el cambio en la UI de inmediato
+        setRowData(prevData => [...prevData, newItem]);
+
+        try {
+            const response = await fetch('http://localhost:1234/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newItem),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al guardar en la base de datos');
+                
+            }
+
+            const data = await response.json();
+            console.log('Guardado exitosamente:', data);
+
+        } catch (error) {
+            console.error("Hubo un fallo en el POST:", error);
+
+            alert("No se pudo guardar el item. Reintentando...");
+            setRowData(prevData => prevData.filter(item => item.id !== newItem.id));
+        }
     }
        
     
@@ -148,10 +190,11 @@ function OpenSideBar({toggleSideBar}){
                 </div>
                 <p>My Blogs</p>
             </div>
-    
-            <div>
+        
+            { isLoading ? <p className="text-xl"> Loading items</p>: (<div>
                 {manager.getTree().map(elem => <SideBaritem key={elem.getId()} nodo={elem} actions={actions}></SideBaritem>)}
-            </div>
+            </div>)}
+            
             <div className=" flex flex-col items-start ml-4">
                 <button  className = "hover:cursor-pointer" onClick={() => {setNewRootFolder(prev => !prev)}}>New Folder</button>
                 { newRootFolder && <CreateRootFolder createItem={createItem} setEstado={setNewRootFolder}></CreateRootFolder>}
