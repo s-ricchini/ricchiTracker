@@ -3,7 +3,6 @@ import SideBaritem from "./SideBarItem"
 import MenuBars from "../../assets/icons/MenuBars"
 import ContextMenu from "./ContextMenu"
 
-import items from "../../data/itemsSidebar"
 import { useState,useMemo,useEffect } from "react"
 import NewItem from "./NewItem"
 
@@ -76,8 +75,11 @@ function OpenSideBar({toggleSideBar}){
         //mas adelante aca deberia redirigirte a una url dinamica con el router y desde esa pagina hacer el fetch al archivo
     }
 
-    function deleteFile(id){
+    async function deleteFile(id){
         closeMenu()
+
+        //guardo un backup por si falla el delete
+        const prevData = [...rowData];
 
         //recupero el nodo que quiero borrar
         const nodoAborrar = manager.findById(id)
@@ -97,11 +99,34 @@ function OpenSideBar({toggleSideBar}){
             setRowData(updatedData)
         }
 
+        try {
+        const response = await fetch(`http://localhost:1234/items/${id}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al eliminar en el servidor');
+        }
+
+        console.log(`Item ${id} y sus hijos eliminados correctamente`);
+
+        } catch (error) {
+            console.error("Fallo el DELETE:", error);
+            
+            alert("No se pudo eliminar el archivo.");
+            setRowData(prevData);
+        }
+
+        
+
     }
 
-    function changeColor(id,newColor){
+    async function changeColor(id,newColor){
+        let oldColor = ''; 
+
         const newData = rowData.map(item => {
             if(item.id === id){
+                oldColor = item.color
                 return {...item, color:newColor}
             }
             return item
@@ -110,20 +135,92 @@ function OpenSideBar({toggleSideBar}){
 
         //tendria que hacer un fetch  PATCH para actualizar la base de datos
 
+        const changes = {id:id,color:newColor}
+
+        try {
+            const response = await fetch('http://localhost:1234/items', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(changes),
+            })
+
+            if (!response.ok) {
+                throw new Error('Error al guardar en la base de datos');
+                
+            }
+
+            const data = await response.json();
+            console.log('Guardado exitosamente:', data);
+
+        } catch (error) {
+            console.error("Hubo un fallo en el PUT:", error);
+
+            alert("No se pudo renombrar el item.");
+            setRowData(prevData => prevData.map(item => {
+                if(item.id === id){
+                    const newItem = {...item,name:oldColor}
+                    return newItem
+                }
+                return item 
+
+            }));
+        }
+
     }
 
-    function renameItem(id,newName){
+
+
+    async function renameItem(id,newName){
+
+        let viejoNombre = '';
+
         const newData = rowData.map(item => {
             if(item.id === id){
+                viejoNombre = item.name
                 const newItem = {...item, name:newName};
                 return newItem
             } 
             return item
             
         })
+
         setRowData(newData);
 
         //hay que actualizar base de datos
+        const changes = {id:id,name:newName}
+
+        try {
+            const response = await fetch('http://localhost:1234/items', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(changes),
+            })
+
+            if (!response.ok) {
+                throw new Error('Error al guardar en la base de datos');
+                
+            }
+
+            const data = await response.json();
+            console.log('Guardado exitosamente:', data);
+
+        } catch (error) {
+            console.error("Hubo un fallo en el PUT:", error);
+
+            alert("No se pudo renombrar el item.");
+            setRowData(prevData => prevData.map(item => {
+                if(item.id === id){
+                    const newItem = {...item,name:viejoNombre}
+                    return newItem
+                }
+                return item 
+
+            }));
+        }
 
 
     }

@@ -38,5 +38,21 @@ Content-Type: application/json
 
   }
 
-###Borrar un archivo
+
+###Cambiar color
+PUT http://localHost:1234/items
+Content-Type: application/json
+
+  {
+    "id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+    "color": "#cca9a9"
+
+  }
+
+
+###Borrar una carpeta que tenga hijos de varios niveles
 DELETE  http://localHost:1234/items/6ba7b810-9dad-11d1-80b4-00c04fd430c8
+
+
+###Borrar una archivo
+DELETE  http://localHost:1234/items/ad647242-23f4-4f9e-b765-680455799767
