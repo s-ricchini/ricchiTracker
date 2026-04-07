@@ -46,9 +46,9 @@ function TodoList() {
 
     tasks.forEach(task => {
       const fechaCreacion = new Date(task.created_at).toLocaleDateString('sv-SE');
-      const fechaUpdate = new Date(task.updated_at).toLocaleDateString('sv-SE');
+      //const fechaUpdate = new Date(task.updated_at).toLocaleDateString('sv-SE');
 
-      if (fechaCreacion <= hoyString || (fechaUpdate === hoyString || fechaCreacion < hoyString)){ //ACA HAY UN BUG 
+      if (fechaCreacion <= hoyString){ 
         hoy.push(task);
       } else {
         mañana.push(task);
