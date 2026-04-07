@@ -2,8 +2,10 @@ import express, {json} from 'express'
 import cors from "cors"
 
 
+
 //routers:
 import { sideBarItemsRouter } from './routes/sideBarItemsRouter.js';
+import { todoListRouter } from './routes/todoListRouter.js';
 
 const app = express();
 app.disable('x-powered-by');
@@ -18,7 +20,7 @@ app.get('/', (req,res) => {
 })
 
 app.use('/items',sideBarItemsRouter)
-
+app.use('/tasks',todoListRouter)
 
 const PORT = 1234
 

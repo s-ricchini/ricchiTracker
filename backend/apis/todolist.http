@@ -1,0 +1,19 @@
+###creo un nueva tarea para hoy
+POST http://localhost:1234/tasks
+Content-Type: application/json
+
+{
+    "title": "Prueba crear tarea",
+    "tomorrow":false
+}
+
+###creo un nueva tarea para manana
+POST http://localhost:1234/tasks
+Content-Type: application/json
+
+{
+    "title": "nueva tarea para manana",
+    "tomorrow":true
+}
+
+

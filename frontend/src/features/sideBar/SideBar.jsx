@@ -15,6 +15,7 @@ function OpenSideBar({toggleSideBar}){
     //estado que sigue a la dataplana(items)
     const [rowData,setRowData] = useState([])
     const [isLoading,setIsLoading] = useState(true)
+    
     //useEffect para recuperar la data al cargar el componente
     useEffect(() => {
         const fetchSidebarData = async () => {
