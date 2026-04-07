@@ -3,9 +3,16 @@ import { useState } from "react"
 
 function Task({task,handleDelete,handleCheck}){
     
+    
+    let newState = false
+    
+    if(!task.completed){
+        newState = true
+    } 
+
     return(
         <div className="flex justify-between bg-white p-2 gap-4">
-           <div onClick={() => {handleCheck(task.id)}} className="space-x-2 flex hover:cursor-pointer items-center">
+           <div onClick={() => {handleCheck(task.id,newState)}} className="space-x-2 flex hover:cursor-pointer items-center">
                 {task.completed ? <SquareIconChecked></SquareIconChecked> : <SquareIcon></SquareIcon>}
                 <p className={`${task.completed && "line-through"}`} >{task.title}</p>
             </div>

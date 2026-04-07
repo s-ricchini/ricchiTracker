@@ -3,7 +3,7 @@ POST http://localhost:1234/tasks
 Content-Type: application/json
 
 {
-    "title": "Prueba crear tarea",
+    "title": "Prueba poner valor en true",
     "tomorrow":false
 }
 
@@ -16,4 +16,13 @@ Content-Type: application/json
     "tomorrow":true
 }
 
+###borrar tarea
+DELETE  http://localhost:1234/tasks/d8d3dff3-8efb-477a-88ca-a518045d48af
 
+###Cambiar a true un valor falta poner el id
+PATCH  http://localhost:1234/tasks/24cef89e-0763-4eb1-b895-efd0927c8a02
+Content-Type: application/json
+
+{
+    "newState": true
+}

@@ -78,6 +78,10 @@ function TodoList() {
         }
       );
 
+      if(!response.ok){
+        throw new Error('Error al crear tarea')
+      }
+
       const newTask = await response.json()
       
       //por el memo se va a actualizar las listas
@@ -90,15 +94,65 @@ function TodoList() {
   }
 
 
-  async function handleCheck(id){
-    console.log('hola')
-  }
-
-
   async function handleDelete(id){
-    console.log('hola')
+    const prevState = tasks
+
+    //borrado optimista
+    setTasks(tasks => tasks.filter( task => task.id !== id));
+
+    try {
+      const response = await fetch(`http://localhost:1234/tasks/${id}`, {
+          method: "DELETE" });
+      
+      if (!response.ok){
+        throw new Error("Error al borrar tarea")
+
+      }
+
+
+    } catch (error) {
+      //si falla vuelvo al estado previo 
+      console.log("Error al borrar tarea",error) 
+      setTasks(prevState)
+
+    }
+
+
   }
 
+  async function handleCheck(id,newState){
+    try {
+      const response = await fetch(`http://localhost:1234/tasks/${id}`, {
+          method: "PATCH", 
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({newState:newState}),
+        }
+      );
+
+      if(!response.ok){
+        throw new Error('Error al marcar tarea')
+      }
+
+      const newTask = await response.json()
+      
+      setTasks(prevTasks => {
+        const newTasks = prevTasks.filter(task => task.id !== id);
+        return [newTask,...newTasks]
+      })
+
+    } catch (error) {
+      console.log("Error al crear tarea",error)      
+    }
+
+  }
+
+  const actions = {
+    handleDelete:handleDelete,
+    handleNewTask:handleNewTask,
+    handleCheck:handleCheck
+  }
 
 
   return (
@@ -122,9 +176,9 @@ function TodoList() {
         </button>
       </div>
       {selected === "today" ? (
-        <TaskList tasks={tasksHoy} setTasks={setTasks}></TaskList>
+        <TaskList tasks={tasksHoy} setTasks={setTasks} actions={actions}></TaskList>
       ) : (
-        <TaskList tasks={tasksMañana} setTasks={setTasks}></TaskList>
+        <TaskList tasks={tasksMañana} setTasks={setTasks} actions={actions} ></TaskList>
       )}
       <AddTaskForm handleNewTask={handleNewTask}></AddTaskForm>
     </div>

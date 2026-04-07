@@ -22,7 +22,7 @@ export class TodoListController {
 
 
     static async deleteTask(req,res){
-        const id = req.params;
+        const id = req.params.id
         try {
             const wasDeleted = await TodoListModel.deleteTask(id);
             
@@ -30,7 +30,7 @@ export class TodoListController {
                 return res.status(400).json({error:"La tarea no existia"})
             }
             
-            return res.status(200)
+            return res.status(200).send()
         } catch (error) {
             return res.status(500).json({error:"Error al borrar la tarea"})
         }
@@ -50,6 +50,24 @@ export class TodoListController {
         }  
 
 
+    }
+
+    static async toggleCheck(req,res){
+        
+        const {id} = req.params
+        const {newState} = req.body
+
+        console.log(id)
+        console.log(newState)
+        
+        try {
+            const result = await TodoListModel.toggleCheck(id,newState);
+            return res.status(200).json(result)
+
+        } catch (error) {
+            console.error(error)
+            return res.status(400).json({error:"error al modificar el task"})
+        }
     }
 
 }

@@ -36,6 +36,7 @@ export class TodoListModel {
 
     static async deleteTask(id){
         try {
+            console.log(`intentando borrar ${id}`)
             const [result] = await pool.query('DELETE FROM tasks WHERE id = UUID_TO_BIN(?)',[id])
             return result.affectedRows > 0
         } catch (error) {
@@ -69,4 +70,29 @@ export class TodoListModel {
             throw error
         }
     }
+
+    static async toggleCheck(id,newState){
+        try {
+            //cambio el objeto
+            const result = await pool.query("UPDATE tasks SET completed = ? WHERE id = UUID_TO_BIN(?)",[newState,id])
+            console.log(result)
+
+            if (result.affectedRows === 0){
+                throw new Error("No se ecnontro el id");
+            }
+
+            //devuelvo el objeto cambiado
+            const [rows] = await pool.query("SELECT BIN_TO_UUID(id) as id, title, completed, created_at, updated_at FROM tasks WHERE id = UUID_TO_BIN(?)",[id])
+            
+            console.log(rows[0])
+            return rows[0]
+        
+        } catch (error) {
+            console.error("Error en el modelo",error)
+            throw error;
+        }
+
+
+    }
+
 }
