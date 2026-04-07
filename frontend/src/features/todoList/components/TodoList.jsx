@@ -58,8 +58,35 @@ function TodoList() {
     return { tasksHoy: hoy, tasksMañana: mañana };
   }, [tasks]);
 
-  function handleNewTask(newTask){
-    console.log('hola')
+
+  async function handleNewTask(title){
+    
+    const reqBody = {title:title,tomorrow:false}
+
+    if (selected === "tomorrow"){
+      reqBody.tomorrow = true
+    
+    }
+
+    try {
+      const response = await fetch("http://localhost:1234/tasks", {
+          method: "POST", 
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(reqBody),
+        }
+      );
+
+      const newTask = await response.json()
+      
+      //por el memo se va a actualizar las listas
+      setTasks(prev => [...prev,newTask])
+
+    } catch (error) {
+      console.log("Error al crear tarea",error)      
+    }
+
   }
 
 

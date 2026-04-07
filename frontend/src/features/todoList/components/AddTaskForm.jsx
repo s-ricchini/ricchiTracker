@@ -6,7 +6,7 @@ function AddTaskForm({handleNewTask}){
     const {register,handleSubmit,formState: {errors}} = useForm()
 
     const OnSubmit = (data) => {
-        handleNewTask(data)
+        handleNewTask(data.title)
     }
 
     return(
