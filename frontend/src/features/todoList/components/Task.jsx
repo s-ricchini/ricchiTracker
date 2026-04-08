@@ -3,7 +3,7 @@ import { useState } from "react"
 
 function Task({task,handleDelete,handleCheck}){
     
-    
+      
     let newState = false
     
     if(!task.completed){
