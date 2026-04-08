@@ -140,7 +140,7 @@ function OpenSideBar({toggleSideBar}){
 
         try {
             const response = await fetch('http://localhost:1234/items', {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -156,7 +156,7 @@ function OpenSideBar({toggleSideBar}){
             console.log('Guardado exitosamente:', data);
 
         } catch (error) {
-            console.error("Hubo un fallo en el PUT:", error);
+            console.error("Hubo un fallo en el PATCH:", error);
 
             alert("No se pudo renombrar el item.");
             setRowData(prevData => prevData.map(item => {
@@ -194,7 +194,7 @@ function OpenSideBar({toggleSideBar}){
 
         try {
             const response = await fetch('http://localhost:1234/items', {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -210,7 +210,7 @@ function OpenSideBar({toggleSideBar}){
             console.log('Guardado exitosamente:', data);
 
         } catch (error) {
-            console.error("Hubo un fallo en el PUT:", error);
+            console.error("Hubo un fallo en el PATCH:", error);
 
             alert("No se pudo renombrar el item.");
             setRowData(prevData => prevData.map(item => {

@@ -1,4 +1,4 @@
-import { sideBarItemsModel } from "../models/SideBarItems/local/sidebarItemsModel.js";
+import { sideBarItemsModel } from "../models/SideBarItems/sql/sideBarItemsModel.js";
 
 export class SideBarItemsController{
     
@@ -31,13 +31,14 @@ export class SideBarItemsController{
         return res.status(404).json({error:"item not found"})
     }
 
+
     static async deleteItem(req,res){
         const id = req.params.id;
 
         const deletedItem = await sideBarItemsModel.deleteItem(id);
 
         if(deletedItem){
-            return res.status(200).json(deletedItem)
+            return res.status(200).send()
         }
         
         return res.status(400).json({error:"item not found"});

@@ -28,32 +28,33 @@ Content-Type: application/json
     "position": 10
 }
 
-###Renombrar un archivo
-PUT http://localHost:1234/items
+###Renombrar un archivo paradigmas (hay que crearlo antes)
+PATCH  http://localHost:1234/items
 Content-Type: application/json
 
   {
-    "id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+    "id": "21a250f2-469b-4eb9-a9d5-8d3d6e3a7d71",
     "name": "Recetas cocina"
 
   }
 
 
-###Cambiar color
-PUT http://localHost:1234/items
+###Cambiar color de paradigmas (hay que crearlo antes)
+PATCH  http://localHost:1234/items
 Content-Type: application/json
 
   {
-    "id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+    "id": "21a250f2-469b-4eb9-a9d5-8d3d6e3a7d71",
     "color": "#cca9a9"
 
   }
 
 
-###Borrar una carpeta que tenga hijos de varios niveles
-DELETE  http://localHost:1234/items/6ba7b810-9dad-11d1-80b4-00c04fd430c8
+###Borrar borra "paradigmas (hay que crearlo de antes)"
+DELETE  http://localHost:1234/items/21a250f2-469b-4eb9-a9d5-8d3d6e3a7d71
 
-
+###Borra carpeta "Universidad" que tiene muchos hijos
+DELETE  http://localHost:1234/items/550e8400-e29b-41d4-a716-446655440000
 ###Borrar una archivo
 DELETE  http://localHost:1234/items/ad647242-23f4-4f9e-b765-680455799767
 
