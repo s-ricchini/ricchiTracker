@@ -6,6 +6,7 @@ import cors from "cors"
 //routers:
 import { sideBarItemsRouter } from './routes/sideBarItemsRouter.js';
 import { todoListRouter } from './routes/todoListRouter.js';
+import { blogEntysRouter } from './routes/blogsEntrysRouter.js';
 
 const app = express();
 app.disable('x-powered-by');
@@ -21,6 +22,7 @@ app.get('/', (req,res) => {
 
 app.use('/items',sideBarItemsRouter)
 app.use('/tasks',todoListRouter)
+app.use('/blog',blogEntysRouter)
 
 const PORT = 1234
 

@@ -1,13 +1,13 @@
-import { BlogEntrysModel } from "../models/blogEntrys/blogEntysModel"
+import { BlogEntrysModel } from "../models/blogEntrys/blogEntysModel.js"
 
 export class BlogEntysController{
     
     static async getAllEntrys(req,res){
         
-        const {file_id} = req.params
+        const {id} = req.params
         
         // data = rows o una lista vacia
-        const data = await BlogEntrysModel.getAllEntrys(file_id)
+        const data = await BlogEntrysModel.getAllEntrys(id)
 
         if(!data){
             return res.status(400).send()
@@ -18,3 +18,4 @@ export class BlogEntysController{
     }
 
 }
+

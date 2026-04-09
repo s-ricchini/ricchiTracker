@@ -1,4 +1,4 @@
-import { pool } from "../../db/connection";
+import { pool } from "../../db/connection.js";
 
 
 export class BlogEntrysModel{
@@ -17,9 +17,9 @@ export class BlogEntrysModel{
              ORDER BY created_at DESC;`, 
             [fileId]
         );
-
+        console.log(rows)
         return rows;
-        
+
     } catch (error) {
         console.error("Error al obtener las entradas del blog:", error);
         return [];
