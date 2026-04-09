@@ -17,3 +17,21 @@ CREATE TABLE sidebar_elements (
         REFERENCES sidebar_elements(id) 
         ON DELETE CASCADE
 );
+
+CREATE TABLE blog_entrys (
+    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    
+    file_id BINARY(16) NOT NULL,
+    
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL, 
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    -- Borrado en cascada automático
+    CONSTRAINT fk_sidebar_element
+        FOREIGN KEY (file_id) 
+        REFERENCES sidebar_elements(id)
+        ON DELETE CASCADE
+);
