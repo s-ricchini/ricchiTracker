@@ -1,9 +1,14 @@
 import { useState,useEffect } from "react"
 import { useParams } from "react-router-dom"
+import { useSideBarContext } from "../contexts/SideBarProvider"
 
+import NavBar from "../features/navbar/NavBar"
+import FullSideBar from "../features/sideBar/FullSideBar"
 import EntryList from "../features/blog/EntryList"
 
 function Blog(){
+
+    const {selected} = useSideBarContext()
 
     //consigo el id que viene en la url
     const {fileId} = useParams()
@@ -60,13 +65,22 @@ function Blog(){
     }
 
 
-    return(<div>
-
-        <div className="flex flex-col w-4/5 mx-auto">
-            <EntryList entrys={entrys}></EntryList>
+    return (
+        <div>
+            <NavBar></NavBar>
+            <div className="flex h-screen ">
+                <FullSideBar></FullSideBar>
+                <div className="flex flex-col flex-1 gap-5 m-5">
+                    {selected && 
+                        <div className="text-xl">
+                            {selected.name}    
+                        </div>    
+                    }
+                    <EntryList entrys={entrys}></EntryList>
+                </div>
+            </div>
         </div>
-        
-    </div>)
+    );
 
 }
 

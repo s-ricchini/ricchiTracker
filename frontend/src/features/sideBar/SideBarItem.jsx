@@ -1,7 +1,10 @@
 import { useState } from 'react';
-
+import { useSideBarContext } from '../../contexts/SideBarProvider';
 
 function SideBaritem({nodo,actions}){ //openFile es una funcion que se encarga de hacer el fetch un nivel mas arriba de componente
+  
+  const {selected} = useSideBarContext()
+
   const [isOpen,setIsOpen] = useState(false);
 
   const handleClick = () => {
@@ -76,7 +79,7 @@ function SideBaritem({nodo,actions}){ //openFile es una funcion que se encarga d
         <span>
           {nodo.isFolder() ? (isOpen ? <FolderOpen color={nodo.getColor()}></FolderOpen> : <FolderClosed color={nodo.getColor()}></FolderClosed>) : <FileIcon color={nodo.getColor()}></FileIcon>}
         </span>
-        <span>
+        <span className={selected && selected.id === nodo.getId() ? "font-semibold": ""}>
           {nodo.getTitle()}
         </span>
         

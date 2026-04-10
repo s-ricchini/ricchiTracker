@@ -6,10 +6,16 @@ import ContextMenu from "./ContextMenu"
 import { useState,useMemo,useEffect } from "react"
 import NewItem from "./NewItem"
 
-//hola
+
+//contexto para saber que archivo se selecciona
+import { useSideBarContext } from "../../contexts/SideBarProvider"
+import { useNavigate } from "react-router-dom"
+
+
 
 function OpenSideBar({toggleSideBar}){
-
+    const {selectFile} = useSideBarContext()
+    const navigate = useNavigate()
     //en la futura implementacion primero hago una query para recuperar la rowData
 
     //estado que sigue a la dataplana(items)
@@ -68,12 +74,15 @@ function OpenSideBar({toggleSideBar}){
     }
 
     function openFile(id){
-        const nodoBuscado =manager.findById(id)
-        const titlulo = nodoBuscado.getTitle()
 
-        console.log(`buscando archivo con id ${id} titulo: ${titlulo}`)
+        //busco el file
+        const file = rowData.find(f => f.id === id)
 
-        //mas adelante aca deberia redirigirte a una url dinamica con el router y desde esa pagina hacer el fetch al archivo
+        //lo pongo en el estado selected usando el hook
+        selectFile(file)
+        navigate(`/blog/${file.id}`)
+        
+
     }
 
     async function deleteFile(id){
@@ -280,7 +289,7 @@ function OpenSideBar({toggleSideBar}){
     }
 
     return(
-        <div className="bg-white">
+        <div className="bg-white h-full pr-6">
             
             <div className="flex text-xl gap-2 items-center" >
                 <div className="cursor-pointer" onClick={toggleSideBar} >
