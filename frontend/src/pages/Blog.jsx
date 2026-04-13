@@ -5,8 +5,16 @@ import { useSideBarContext } from "../contexts/SideBarProvider"
 import NavBar from "../features/navbar/NavBar"
 import FullSideBar from "../features/sideBar/FullSideBar"
 import EntryList from "../features/blog/EntryList"
+import BlogEntryForm from "../features/blog/BlogEntryForm"
+
+
 
 function Blog(){
+    const [newEntryForm,setNewEntryForm] = useState(false)
+    const [modifyForm,setModifyForm] = useState(false)
+    
+
+
 
     const {selected} = useSideBarContext()
 
@@ -43,6 +51,8 @@ function Blog(){
         }
 
         fetchData()
+        setNewEntryForm(false)
+        setModifyForm(false)
     }, [fileId])
 
     
@@ -51,11 +61,35 @@ function Blog(){
     }
 
     async function deleteEntry(id) {
-        console.log("Delete")
+        try {
+            const result = await fetch(`http://localhost:1234/blog/${id}`,{method:"DELETE"})
+            
+            if(!result.ok){
+                throw new Error("Error en el fetch para borrar la entry")
+            }
+
+            //busco en el estado y borro
+            const newEntrys = entrys.filter(e => e.id !== id)
+            setEntrys(newEntrys)
+
+        } catch (error) {
+            console.log(error)
+        }
     }
 
-    async function modifyEntry(id) {
+    async function modifyEntry(id,newText) {
         console.log("Modify")
+    }
+
+    function closeForm(form){
+        if(form === 'modifyForm'){
+            setModifyForm(false)
+        }
+        else{
+            setNewEntryForm(false)
+        }
+
+
     }
 
     const actions = {
@@ -76,7 +110,13 @@ function Blog(){
                             {selected.name}    
                         </div>    
                     }
-                    <EntryList entrys={entrys}></EntryList>
+                    <div>
+                        {newEntryForm ? <BlogEntryForm createEntry={createEntry} modifyEntry={modifyEntry} closeForm={closeForm}></BlogEntryForm> : <button className="w-fit bg-black rounded text-white text-lg hover:bg-amber-500 cursor-pointer px-4 py-2" onClick={() => {setNewEntryForm(prev => !prev)}}>New entry</button> }
+
+                        <EntryList entrys={entrys} actions={actions}></EntryList>
+
+                    </div>
+                    
                 </div>
             </div>
         </div>

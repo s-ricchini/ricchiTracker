@@ -1,2 +1,23 @@
 ### busco todos los entrys de mi archivo "Notas de React" (7472de2a-0f1e-481b-a53d-2495d4d38c2a)
 GET http://localhost:1234/blog/7472de2a-0f1e-481b-a53d-2495d4d38c2a
+
+### Creo un nuevo entry para el blog de notas de react
+
+POST http://localhost:1234/blog
+Content-Type: application/json
+
+{
+    "file_id": "7472de2a-0f1e-481b-a53d-2495d4d38c2a",
+    "title": "hola soy la prueba del post",
+    "content":"esta es la primera prueba del backend para insertar entrys"
+}
+
+### modifico el titulo del item que cree antes, hay que ponerle el id
+PATCH http://localhost:1234/blog/
+Content-Type: application/json
+
+{
+    "title": "estoy modificando el titulo de un entry",
+    "content":"esta es la primera prueba del backend para insertar entrys"
+}
+

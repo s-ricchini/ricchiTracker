@@ -6,12 +6,17 @@ class SidebarNode {
     this.color = data.color;
     this.parentId = data.parent_id;
     this.position = data.position;
+    this.is_open = data.is_open;
     this.children = []; //guardaremos los hijos
   }
 
   // es carpeta
   isFolder() {
     return this.type === 'folder';
+  }
+
+  isOpen(){
+    return Boolean(this.is_open);
   }
 
   getParentId(){

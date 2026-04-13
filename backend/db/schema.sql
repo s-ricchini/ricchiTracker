@@ -2,12 +2,13 @@ DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS sidebar_elements;
 
 CREATE TABLE sidebar_elements (
-    id BINARY(16) PRIMARY KEY default UUID_TO_BIN(UUID()),
+    id BINARY(16) PRIMARY KEY default (UUID_TO_BIN(UUID())),
     name VARCHAR(255) NOT NULL,
     type ENUM('file', 'folder') NOT NULL,
-    color VARCHAR(7) DEFAULT NULL, --hexadecimal
+    color VARCHAR(7) DEFAULT NULL,
     parent_id BINARY(16) DEFAULT NULL,
     position INT DEFAULT 0,
+    is_open BOOL DEFAULT false,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -20,7 +21,7 @@ CREATE TABLE sidebar_elements (
 
 CREATE TABLE blog_entrys (
     id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
-    
+
     file_id BINARY(16) NOT NULL,
     
     title VARCHAR(255) NOT NULL,
@@ -34,4 +35,12 @@ CREATE TABLE blog_entrys (
         FOREIGN KEY (file_id) 
         REFERENCES sidebar_elements(id)
         ON DELETE CASCADE
+);
+
+CREATE TABLE tasks(
+    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    title VARCHAR(255) NOT NULL,
+    completed BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

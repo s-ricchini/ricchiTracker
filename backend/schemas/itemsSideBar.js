@@ -7,6 +7,7 @@ export const itemsSideBarSchema = z.object({
   type: z.enum(['file', 'folder']),
   color: z.string(),
   parent_id: z.uuid().nullable(),
-  position: z.number().positive().default(100)
+  position: z.number().positive(),
+  is_open: z.boolean()
 })
 

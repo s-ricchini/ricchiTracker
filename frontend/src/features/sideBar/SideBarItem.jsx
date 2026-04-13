@@ -5,12 +5,14 @@ function SideBaritem({nodo,actions}){ //openFile es una funcion que se encarga d
   
   const {selected} = useSideBarContext()
 
-  const [isOpen,setIsOpen] = useState(false);
-
   const handleClick = () => {
-    //si es carpeta modifico el stado a open -> desencadena la recursividad
+    //si es carpeta modifico el stado a open -> desencadena la recursividad y le cambio el estado en el server
     if(nodo.isFolder()){
-      setIsOpen( prev => !prev)
+      const newState = !nodo.isOpen()
+      console.log("queriendo",newState, nodo.getId())
+
+      actions.toggleOpenFolder(nodo.getId(),newState)
+
     } else{
       actions.openFile(nodo.getId())
     }
@@ -77,14 +79,14 @@ function SideBaritem({nodo,actions}){ //openFile es una funcion que se encarga d
     <div className='ml-4'>
       <div onClick={handleClick} onContextMenu={handleRightClick} className='flex gap 3 text-gray-800 cursor-pointer items-center gap-1' >
         <span>
-          {nodo.isFolder() ? (isOpen ? <FolderOpen color={nodo.getColor()}></FolderOpen> : <FolderClosed color={nodo.getColor()}></FolderClosed>) : <FileIcon color={nodo.getColor()}></FileIcon>}
+          {nodo.isFolder() ? (nodo.isOpen() ? <FolderOpen color={nodo.getColor()}></FolderOpen> : <FolderClosed color={nodo.getColor()}></FolderClosed>) : <FileIcon color={nodo.getColor()}></FileIcon>}
         </span>
         <span className={selected && selected.id === nodo.getId() ? "font-semibold": ""}>
           {nodo.getTitle()}
         </span>
         
       </div>
-      {(nodo.isFolder() && isOpen && nodo.hasChilds()) &&  nodo.getChilds().map(child => <SideBaritem  key= {child.getId()} nodo={child} actions={actions}></SideBaritem>)}
+      {(nodo.isFolder() && nodo.isOpen() && nodo.hasChilds()) &&  nodo.getChilds().map(child => <SideBaritem  key= {child.getId()} nodo={child} actions={actions}></SideBaritem>)}
       
       
     </div>

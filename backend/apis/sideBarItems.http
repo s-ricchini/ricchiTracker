@@ -50,8 +50,20 @@ Content-Type: application/json
   }
 
 
+###Cambiar estado a abierto de paradigmas (hay que crearlo antes)
+PATCH  http://localHost:1234/items
+Content-Type: application/json
+
+  {
+    "id": "21a250f2-469b-4eb9-a9d5-8d3d6e3a7d71",
+    "is_open": true
+
+  }
+
+
 ###Borrar borra "paradigmas (hay que crearlo de antes)"
 DELETE  http://localHost:1234/items/21a250f2-469b-4eb9-a9d5-8d3d6e3a7d71
+
 
 ###Borra carpeta "Universidad" que tiene muchos hijos
 DELETE  http://localHost:1234/items/550e8400-e29b-41d4-a716-446655440000

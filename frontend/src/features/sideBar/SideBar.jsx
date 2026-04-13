@@ -170,7 +170,7 @@ function OpenSideBar({toggleSideBar}){
             alert("No se pudo renombrar el item.");
             setRowData(prevData => prevData.map(item => {
                 if(item.id === id){
-                    const newItem = {...item,name:oldColor}
+                    const newItem = {...item,color:oldColor}
                     return newItem
                 }
                 return item 
@@ -178,6 +178,58 @@ function OpenSideBar({toggleSideBar}){
             }));
         }
 
+    }
+
+
+    async function toggleOpenFolder(id,newstate){
+        let oldState = null; 
+
+        const newData = rowData.map(item => {
+            if(item.id === id){
+                oldState = item.is_open
+                return {...item, is_open:newstate}
+            }
+            return item
+        })
+        setRowData(newData);
+
+        //tendria que hacer un fetch  PATCH para actualizar la base de datos
+
+        const changes = {id:id,is_open:newstate}
+
+        try {
+            const response = await fetch('http://localhost:1234/items', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(changes),
+            })
+
+            if (!response.ok) {
+                throw new Error('Error al guardar en la base de datos');
+                
+            }
+
+            const data = await response.json();
+            console.log('Guardado exitosamente:', data);
+
+        } catch (error) {
+            console.error("Hubo un fallo en el PATCH:", error);
+
+            alert("No se pudo actualizar el estado");
+            
+            if (oldState !== null){
+                setRowData(prevData => prevData.map(item => {
+                    if(item.id === id){
+                        const newItem = {...item,is_open:oldState}
+                        return newItem
+                    }
+                    return item 
+
+                }));
+            }   
+        }
     }
 
 
@@ -243,6 +295,7 @@ function OpenSideBar({toggleSideBar}){
             color:color,
             parent_id:parentId,
             position:100,
+            is_open:false
         }
         
     
@@ -285,6 +338,7 @@ function OpenSideBar({toggleSideBar}){
         changeColor: changeColor,
         handleMenu:handleMenu,
         closeMenu:closeMenu,
+        toggleOpenFolder:toggleOpenFolder
 
     }
 

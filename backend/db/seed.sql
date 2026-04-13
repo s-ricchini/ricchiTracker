@@ -1,5 +1,3 @@
--- Limpiamos la tabla para empezar de cero
-DELETE FROM sidebar_elements;
 
 INSERT INTO sidebar_elements (id, name, type, color, parent_id, position) VALUES
 (UUID_TO_BIN('550e8400-e29b-41d4-a716-446655440000'), 'Universidad', 'folder', '#4A90E2', NULL, 0),
