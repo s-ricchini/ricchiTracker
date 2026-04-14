@@ -3,11 +3,11 @@ import { useSideBarContext } from "../../contexts/SideBarProvider"
 
 function NavBar(){
     
-    const {setFile} = useSideBarContext()
+    const {deleteSelectedFile} = useSideBarContext()
 
     return(
         <nav className="bg-gray-600 text-white p-4">
-            <Link onClick={() => setFile(null)} to={'/'}><h1 className="text-2xl">RichiTracker</h1></Link>
+            <Link onClick={() => deleteSelectedFile()} to={'/'}><h1 className="text-2xl">RichiTracker</h1></Link>
         </nav>
 
 
@@ -17,3 +17,4 @@ function NavBar(){
 }
 
 export default NavBar
+
