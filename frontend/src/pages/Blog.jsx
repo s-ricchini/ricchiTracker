@@ -11,7 +11,6 @@ import BlogEntryForm from "../features/blog/BlogEntryForm"
 
 function Blog(){
     const [newEntryForm,setNewEntryForm] = useState(false)
-    const [modifyForm,setModifyForm] = useState(false)
     
 
 
@@ -52,7 +51,6 @@ function Blog(){
 
         fetchData()
         setNewEntryForm(false)
-        setModifyForm(false)
     }, [fileId])
 
     

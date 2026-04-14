@@ -14,7 +14,7 @@ function Task({task,handleDelete,handleCheck}){
         <div className="flex justify-between bg-white p-2 gap-4">
            <div onClick={() => {handleCheck(task.id,newState)}} className="space-x-2 flex hover:cursor-pointer items-center">
                 {task.completed ? <SquareIconChecked></SquareIconChecked> : <SquareIcon></SquareIcon>}
-                <p className={`${task.completed && "line-through"}`} >{task.title}</p>
+                <p className={`break-all ${task.completed && "line-through"}`} >{task.title}</p>
             </div>
             <div onClick={() => {handleDelete(task.id)}}>
                 <TrashIcon color={"rgb(232, 232, 232)"} hoverColor={"rgb(242, 46, 46)"}> </TrashIcon>

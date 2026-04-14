@@ -19,7 +19,7 @@ export default function BlogEntryForm({ createEntry,modifyEntry,closeForm, entry
       modifyEntry(entry.id,data.title,data.content)
     }
 
-
+    closeForm()
 
   }
 

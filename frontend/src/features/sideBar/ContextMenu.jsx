@@ -1,10 +1,33 @@
 import { useForm } from "react-hook-form"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import ColorPicker from "./ColorPicker"
 import NewItem from "./NewItem"
 
 
+
+
 function ContextMenu({nodo,x,y,actions}){
+    
+    const menuRef = useRef(null)
+    const [adjustedPos, setAdjustedPos] = useState({x, y})
+
+    useEffect(() => {
+        if(menuRef.current){
+            const rect = menuRef.current.getBoundingClientRect()
+            const windowHeight = window.innerHeight
+            const windowWidth = window.innerWidth
+
+            let newY = y
+            let newX = x
+
+            if(rect.bottom > windowHeight) newY = y - rect.height
+            if(rect.right > windowWidth) newX = x - rect.width
+
+            setAdjustedPos({x: newX, y: newY})
+        }
+    }, [x, y])
+
+
     const [isRename,setIsRename] = useState(false)
     const [isChangeColor,setIsChangeColor] = useState(false)
     const [isDelete,setIsDelete] = useState(false)
@@ -51,7 +74,7 @@ function ContextMenu({nodo,x,y,actions}){
     }
 
     return(
-        <div style={{position:'fixed', top: y, left:x, zIndex:1000}} className='bg-white border border-gray-300 w-lg p-2 space-y-2'>
+        <div ref={menuRef} style={{position:'fixed', top: adjustedPos.y, left:adjustedPos.x, zIndex:1000}} className='bg-white border border-gray-300 w-lg p-2 space-y-2'>
             <div className="flex border-b pb-2 border-gray-300 gap-1.5 items-center">
                 {nodo.isFolder() ? <FolderClosed color={currentColor}></FolderClosed> : <FileIcon color={nodo.getColor()}></FileIcon>}
                 <p className="text-xl">{name}</p>

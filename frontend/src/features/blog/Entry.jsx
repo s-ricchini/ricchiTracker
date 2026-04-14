@@ -27,8 +27,8 @@ function Entry({entry,actions}){
     }
     
     return(
-        <>
-            {editOpen ? <BlogEntryForm modifyEntry={actions.modifyEntry} closeForm={closeMenu} entry={entry}></BlogEntryForm> : (<div className="bg-white p-7 mt-3 space-y-2 border-gray-100 rounded">
+        <div className="mt-3 flex flex-col gap-3">
+            {editOpen ? <div cla><BlogEntryForm modifyEntry={actions.modifyEntry} closeForm={closeMenu} entry={entry}></BlogEntryForm></div> : (<div className="bg-white p-7 space-y-2 border-gray-100 rounded">
                 <div className="flex justify-between items-center">
                     <p className="font-semibold text-lg text-gray-900">{entry.title}</p>
                     <p className="text-gray-400">{formattedDate}</p>
@@ -45,7 +45,7 @@ function Entry({entry,actions}){
 
             </div>
             )}
-        </>  
+        </div>  
 
     )
 
