@@ -4,19 +4,23 @@ export default function BlogEntryForm({ createEntry,modifyEntry,closeForm, entry
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       title: entry?.title ?? "",
-      text: entry?.text ?? "",
+      content: entry?.content ?? "",
     }
   });
 
   const onSubmit = (data) => {
     console.log(data)
+    //estoy creando una nueva entry
+    if(!entry){
+      createEntry(data.title,data.content)
+      console.log("creando entry", data.title,data.content)
+    } else{
+      console.log("Modificando entry con el titulo: ",data.title)
+      modifyEntry(entry.id,data.title,data.content)
+    }
 
-//    if(entry){
-//        modifyEntry(entry.id)        
-//    } else{
-//        createEntry(data)
-//    }
-  
+
+
   }
 
   const handleCloseMenu = () => {
@@ -46,11 +50,11 @@ export default function BlogEntryForm({ createEntry,modifyEntry,closeForm, entry
         <label className="font-semibold text-lg">Text</label>
         <textarea
           className="border border-gray-200 rounded p-2"
-          {...register("text", { required: "Text is required" })}
+          {...register("content", { required: "Text is required" })}
           placeholder="Write your entry..."
           rows={5}
         />
-        {errors.text && <span>{errors.text.message}</span>}
+        {errors.content && <span>{errors.content.message}</span>}
       </div>
 
       <div className="flex gap-2">

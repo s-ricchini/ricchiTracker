@@ -1,7 +1,10 @@
 import { useState } from "react";
+import BlogEntryForm from "./BlogEntryForm";
 
 function Entry({entry,actions}){
-    
+
+    const [editOpen,setEditOpen] = useState(false)
+
     const localDate = new Date(entry.created_at)
     const formattedDate = localDate.toLocaleString('es-AR', {
         day: '2-digit',
@@ -19,26 +22,30 @@ function Entry({entry,actions}){
 
     }
 
+    const closeMenu = () => {
+        setEditOpen(false)
+    }
     
-
     return(
-        <div className="bg-white p-7 mt-3 space-y-2 border-gray-100 rounded">
-            <div className="flex justify-between items-center">
-                <p className="font-semibold text-lg text-gray-900">{entry.title}</p>
-                <p className="text-gray-400">{formattedDate}</p>
-            </div>
-            
-            <div className="flex">
-                <p className="text-lg text-gray-700">{entry.content}</p>
-                <div className="flex flex-col gap-3">
-                    <button onClick={handleDelete}><TrashIcon color={"rgb(232, 232, 232)"} hoverColor={"rgb(242, 46, 46)"}> </TrashIcon></button>
-                    <button onClick={handleDelete}><EditIcon color={"rgb(232, 232, 232)"} hoverColor={"rgb(242, 46, 46)"}> </EditIcon></button>
+        <>
+            {editOpen ? <BlogEntryForm modifyEntry={actions.modifyEntry} closeForm={closeMenu} entry={entry}></BlogEntryForm> : (<div className="bg-white p-7 mt-3 space-y-2 border-gray-100 rounded">
+                <div className="flex justify-between items-center">
+                    <p className="font-semibold text-lg text-gray-900">{entry.title}</p>
+                    <p className="text-gray-400">{formattedDate}</p>
+                </div>
+                
+                <div className="flex">
+                    <p className="text-lg text-gray-700">{entry.content}</p>
+                    <div className="flex flex-col gap-3">
+                        <button onClick={handleDelete}><TrashIcon color={"rgb(232, 232, 232)"} hoverColor={"rgb(242, 46, 46)"}> </TrashIcon></button>
+                        <button onClick={() => setEditOpen(prev => !prev)}><EditIcon color={"rgb(232, 232, 232)"} hoverColor={"rgb(242, 46, 46)"}> </EditIcon></button>
+                    </div>
+
                 </div>
 
             </div>
-
-        </div>
-
+            )}
+        </>  
 
     )
 

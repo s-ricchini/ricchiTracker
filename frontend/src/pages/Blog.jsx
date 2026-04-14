@@ -56,9 +56,26 @@ function Blog(){
     }, [fileId])
 
     
-    async function createEntry(fileId){
-        console.log("Create")
-    }
+    async function createEntry(title, content) {
+        try {
+            const response = await fetch(`http://localhost:1234/blog/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ file_id: fileId,title:title, content:content }),
+            });
+
+            if (!response.ok) throw new Error('Error al crear la entry');
+
+            const data = await response.json();
+            setEntrys(prev => [data,...prev]);
+
+        } catch (error) {
+            console.error("Hubo un fallo en el POST:", error);
+            alert("No se pudo crear la entry.");
+        }
+}
 
     async function deleteEntry(id) {
         try {
@@ -77,19 +94,33 @@ function Blog(){
         }
     }
 
-    async function modifyEntry(id,newText) {
-        console.log("Modify")
+    async function modifyEntry(id, newTitle, newContent) {
+        const previousEntries = entrys
+
+        // Actualización optimista
+        setEntrys(prev => prev.map(entry => 
+            entry.id === id 
+                ? { ...entry, title: newTitle, content: newContent }
+                : entry
+        ))
+
+        try {
+            const response = await fetch(`http://localhost:1234/blog/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: newTitle, content: newContent })
+            })
+
+            if (!response.ok) throw new Error("Error al modificar la entrada")
+
+        } catch (error) {
+            console.error(error)
+            setEntrys(previousEntries) 
+        }
     }
 
-    function closeForm(form){
-        if(form === 'modifyForm'){
-            setModifyForm(false)
-        }
-        else{
-            setNewEntryForm(false)
-        }
-
-
+    function closeNewEntryForm(){
+        setNewEntryForm(false)
     }
 
     const actions = {
@@ -111,7 +142,7 @@ function Blog(){
                         </div>    
                     }
                     <div>
-                        {newEntryForm ? <BlogEntryForm createEntry={createEntry} modifyEntry={modifyEntry} closeForm={closeForm}></BlogEntryForm> : <button className="w-fit bg-black rounded text-white text-lg hover:bg-amber-500 cursor-pointer px-4 py-2" onClick={() => {setNewEntryForm(prev => !prev)}}>New entry</button> }
+                        {newEntryForm ? <BlogEntryForm createEntry={createEntry} closeForm={closeNewEntryForm} ></BlogEntryForm> : <button className="w-fit bg-black rounded text-white text-lg hover:bg-amber-500 cursor-pointer px-4 py-2" onClick={() => {setNewEntryForm(prev => !prev)}}>New entry</button> }
 
                         <EntryList entrys={entrys} actions={actions}></EntryList>
 
