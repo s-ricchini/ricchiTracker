@@ -5,13 +5,14 @@ export class TodoListController {
         
         const from = req.query.from
         const to = req.query.to
+        const userId = req.session.id
         
         if(!to || !from){
             return res.status(400).json({error:"faltan parametros en la url"})
         }
 
         //busco las tareas para ese intervalo de tiempo
-        const result = await TodoListModel.getInterval(from,to)
+        const result = await TodoListModel.getInterval(userId,from,to)
         if(!result){
             return res.status(400).json({error:"error"})
         }
@@ -23,8 +24,10 @@ export class TodoListController {
 
     static async deleteTask(req,res){
         const id = req.params.id
+        const userId = req.session.id
+
         try {
-            const wasDeleted = await TodoListModel.deleteTask(id);
+            const wasDeleted = await TodoListModel.deleteTask(userId,id);
             
             if(!wasDeleted){
                 return res.status(400).json({error:"La tarea no existia"})
@@ -40,9 +43,10 @@ export class TodoListController {
     static async createTask(req,res){
         const title = req.body.title;
         const tomorrow = req.body.tomorrow
-        
+        const userId = req.session.id
+
         try {
-            const result = await TodoListModel.createTask(title,tomorrow)
+            const result = await TodoListModel.createTask(userId,title,tomorrow)
             console.log(result)
             return res.status(201).json(result)
         } catch (error) {
@@ -56,12 +60,13 @@ export class TodoListController {
         
         const {id} = req.params
         const {newState} = req.body
+        const userId = req.session.id
 
         console.log(id)
         console.log(newState)
         
         try {
-            const result = await TodoListModel.toggleCheck(id,newState);
+            const result = await TodoListModel.toggleCheck(userId,id,newState);
             return res.status(200).json(result)
 
         } catch (error) {

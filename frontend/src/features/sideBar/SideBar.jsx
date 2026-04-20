@@ -2,6 +2,8 @@ import SideBarManager from "./sideBarManager"
 import SideBaritem from "./SideBarItem"
 import MenuBars from "../../assets/icons/MenuBars"
 import ContextMenu from "./ContextMenu"
+import { useNavigate } from "react-router-dom"
+
 
 import { useState,useMemo,useEffect } from "react"
 import NewItem from "./NewItem"
@@ -9,7 +11,6 @@ import NewItem from "./NewItem"
 
 //contexto para saber que archivo se selecciona
 import { useSideBarContext } from "../../contexts/SideBarProvider"
-import { useNavigate } from "react-router-dom"
 
 
 
@@ -27,7 +28,15 @@ function OpenSideBar({toggleSideBar}){
         const fetchSidebarData = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch("http://localHost:1234/items");
+                const response = await fetch("http://localhost:1234/items",{
+                    credentials:"include",
+                });
+
+                if (response.status === 401){
+                    navigate("/login");
+                   return;
+                }
+
                 const data = await response.json();
                 console.log(data)
                 setRowData(data);
@@ -38,7 +47,7 @@ function OpenSideBar({toggleSideBar}){
             }
         };
         fetchSidebarData();
-    }, []); // El array vacío asegura que solo se ejecute una vez
+    }, [navigate]); // El array vacío asegura que solo se ejecute una vez
 
     //uso memo para que solo se calcule el arbol si cambia la data
     const manager = useMemo(() => {
@@ -110,15 +119,21 @@ function OpenSideBar({toggleSideBar}){
         }
 
         try {
-        const response = await fetch(`http://localhost:1234/items/${id}`, {
-            method: 'DELETE',
-        });
+            const response = await fetch(`http://localhost:1234/items/${id}`, {
+                credentials:"include",
+                method: 'DELETE',
+            });
 
-        if (!response.ok) {
-            throw new Error('Error al eliminar en el servidor');
-        }
+            if (response.status === 401){
+                navigate("/login");
+                return;
+            }
 
-        console.log(`Item ${id} y sus hijos eliminados correctamente`);
+            if (!response.ok) {
+                throw new Error('Error al eliminar en el servidor');
+            }
+
+            console.log(`Item ${id} y sus hijos eliminados correctamente`);
 
         } catch (error) {
             console.error("Fallo el DELETE:", error);
@@ -150,11 +165,17 @@ function OpenSideBar({toggleSideBar}){
         try {
             const response = await fetch('http://localhost:1234/items', {
                 method: 'PATCH',
+                credentials:"include",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(changes),
             })
+
+            if (response.status === 401){
+                navigate("/login");
+                return;
+            }
 
             if (!response.ok) {
                 throw new Error('Error al guardar en la base de datos');
@@ -200,11 +221,17 @@ function OpenSideBar({toggleSideBar}){
         try {
             const response = await fetch('http://localhost:1234/items', {
                 method: 'PATCH',
+                credentials:"include",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(changes),
             })
+
+            if (response.status === 401){
+                navigate("/login");
+                return;
+            }
 
             if (!response.ok) {
                 throw new Error('Error al guardar en la base de datos');
@@ -256,11 +283,17 @@ function OpenSideBar({toggleSideBar}){
         try {
             const response = await fetch('http://localhost:1234/items', {
                 method: 'PATCH',
+                credentials:"include",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(changes),
             })
+
+            if (response.status === 401){
+                navigate("/login");
+                return;
+            }
 
             if (!response.ok) {
                 throw new Error('Error al guardar en la base de datos');
@@ -306,11 +339,18 @@ function OpenSideBar({toggleSideBar}){
         try {
             const response = await fetch('http://localhost:1234/items', {
                 method: 'POST',
+                credentials:'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(newItem),
             });
+
+            if (response.status === 401){
+                navigate("/login");
+                return;
+            }
+
 
             if (!response.ok) {
                 throw new Error('Error al guardar en la base de datos');

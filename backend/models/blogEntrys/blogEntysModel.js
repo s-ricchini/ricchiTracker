@@ -2,7 +2,7 @@ import { pool } from "../../db/connection.js";
 
 
 export class BlogEntrysModel{
-    static async getAllEntrys(fileId) {
+    static async getAllEntrys(userId,fileId) {
         try {
             const [rows] = await pool.query(
                 `SELECT 
@@ -13,9 +13,9 @@ export class BlogEntrysModel{
                     created_at, 
                     updated_at 
                 FROM blog_entrys 
-                WHERE file_id = UUID_TO_BIN(?) 
+                WHERE user_id = UUID_TO_BIN(?) AND file_id = UUID_TO_BIN(?) 
                 ORDER BY created_at DESC;`, 
-                [fileId]
+                [userId,fileId]
             );
             console.log(rows)
             return rows;
@@ -26,10 +26,10 @@ export class BlogEntrysModel{
         }
     }
 
-    static async deleteEntry(id){
+    static async deleteEntry(userId,id){
         try {
             console.log(`intentando borrar entry: ${id}`)
-            const [result] = await pool.query('DELETE FROM blog_entrys WHERE id = UUID_TO_BIN(?)',[id])
+            const [result] = await pool.query('DELETE FROM blog_entrys WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?)',[userId,id])
             
             if (result.affectedRows === 0){
                 throw new Error("invalid id")
@@ -45,18 +45,18 @@ export class BlogEntrysModel{
 
     }
 
-    static async createEntry(file_id,title,content){
+    static async createEntry(userId,file_id,title,content){
         
         const id = crypto.randomUUID()
         try {
-            const [result] = await pool.query("INSERT INTO blog_entrys (id,file_id,title,content) VALUES (UUID_TO_BIN(?),UUID_TO_BIN(?),?,?);", [id,file_id,title,content])
+            const [result] = await pool.query("INSERT INTO blog_entrys (id,user_id,file_id,title,content) VALUES (UUID_TO_BIN(?),UUID_TO_BIN(?),UUID_TO_BIN(?),?,?);", [id,userId,file_id,title,content])
 
             if(result.affectedRows === 0){
                 throw new Error('Error en la query')
             }
 
             //busco el item que cree
-            const [rows] = await pool.query("SELECT BIN_TO_UUID(id) as id,BIN_TO_UUID(file_id) as file_id,title,content,created_at FROM blog_entrys WHERE id = UUID_TO_BIN(?);",[id] )
+            const [rows] = await pool.query("SELECT BIN_TO_UUID(id) as id,BIN_TO_UUID(file_id) as file_id,title,content,created_at FROM blog_entrys WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?);",[userId,id] )
             console.log(rows[0])
             
             return rows[0]
@@ -69,16 +69,16 @@ export class BlogEntrysModel{
 
     }
 
-    static async modifyEntry(id,title,content){
+    static async modifyEntry(userId,id,title,content){
         try {
             
-            const [result] = await pool.query("UPDATE blog_entrys SET title = ?, content = ? WHERE id = UUID_TO_BIN(?);",[title, content, id])
+            const [result] = await pool.query("UPDATE blog_entrys SET title = ?, content = ? WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?);",[title,content,userId,id])
             if (result.affectedRows === 0){
                 throw new Error("Id not found")
             }
 
             //busco el item que modifique
-            const [rows] = await pool.query("SELECT BIN_TO_UUID(id) as id,BIN_TO_UUID(file_id) as file_id,title,content,created_at FROM blog_entrys WHERE id = UUID_TO_BIN(?);",[id] )
+            const [rows] = await pool.query("SELECT BIN_TO_UUID(id) as id,BIN_TO_UUID(file_id) as file_id,title,content,created_at FROM blog_entrys WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?);",[userId,id] )
             console.log(rows[0])
             return rows[0]
 

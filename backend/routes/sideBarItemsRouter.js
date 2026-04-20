@@ -1,4 +1,5 @@
 import { Router } from "express";
+import protectedRoute from "../middlewares/protectedRoute.js";
 
 import { SideBarItemsController } from "../controller/sideBarItemsController.js";
 
@@ -8,11 +9,11 @@ import { itemsSideBarSchema } from "../schemas/itemsSideBar.js";
 
 export const sideBarItemsRouter = Router()
 
-sideBarItemsRouter.get("/",SideBarItemsController.getAll)
+sideBarItemsRouter.get("/",protectedRoute,SideBarItemsController.getAll)
 
-sideBarItemsRouter.post('/', validateSchema(itemsSideBarSchema) ,SideBarItemsController.addItem)
+sideBarItemsRouter.post('/', protectedRoute,validateSchema(itemsSideBarSchema) ,SideBarItemsController.addItem)
 
-sideBarItemsRouter.patch('/' ,validateSchema(itemsSideBarSchema,true) ,SideBarItemsController.modifyItem)
+sideBarItemsRouter.patch('/',protectedRoute,validateSchema(itemsSideBarSchema,true) ,SideBarItemsController.modifyItem)
 
-sideBarItemsRouter.delete('/:id' ,SideBarItemsController.deleteItem)
+sideBarItemsRouter.delete('/:id',protectedRoute ,SideBarItemsController.deleteItem)
 

@@ -1,13 +1,16 @@
 import { useState,useEffect, useMemo } from "react";
 import TaskList from "./TaskList";
 import AddTaskForm from "./AddTaskForm";
+import { useNavigate } from "react-router-dom";
+
+
 
 function TodoList() {
   //array de perueba posteriormente hace fetch a db mysql
 
   const [tasks,setTasks] = useState([])
   const [selected, setSelected] = useState("today");
-
+  const navigate = useNavigate()
    
   //useEffect para recuperar la data al cargar el componente
   useEffect(() => {
@@ -22,18 +25,27 @@ function TodoList() {
 
       const fetchTaskData = async (from,to) => {
           try {
-              const response = await fetch(`http://localhost:1234/tasks?from=${from}&to=${to}`);
+              const response = await fetch(`http://localhost:1234/tasks?from=${from}&to=${to}`,{
+                credentials:"include",
+              });
+              
+              if (response.status === 401){
+                  navigate("/login");
+                  return;
+              }
+             
               const data = await response.json();
               setTasks(data)
               console.log(data);
-              
+             
+  
           } catch (error) {
               console.error("Error recuperando los items:", error);
           };
           
         }
       fetchTaskData(inicioUTC,finUTC)
-    }, []); 
+    }, [navigate]); 
     
     
   const { tasksHoy, tasksMañana } = useMemo(() => {
@@ -70,13 +82,19 @@ function TodoList() {
 
     try {
       const response = await fetch("http://localhost:1234/tasks", {
-          method: "POST", 
+          method: "POST",
+          credentials:"include",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(reqBody),
         }
       );
+
+      if (response.status === 401){
+        navigate("/login");
+        return;
+      }
 
       if(!response.ok){
         throw new Error('Error al crear tarea')
@@ -102,8 +120,14 @@ function TodoList() {
 
     try {
       const response = await fetch(`http://localhost:1234/tasks/${id}`, {
-          method: "DELETE" });
+          method: "DELETE",
+          credentials:"include", });
       
+      if (response.status === 401){
+          navigate("/login");
+          return;
+      }
+
       if (!response.ok){
         throw new Error("Error al borrar tarea")
 
@@ -124,12 +148,18 @@ function TodoList() {
     try {
       const response = await fetch(`http://localhost:1234/tasks/${id}`, {
           method: "PATCH", 
+          credentials:"include",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({newState:newState}),
         }
       );
+
+      if (response.status === 401){
+          navigate("/login");
+          return;
+      }
 
       if(!response.ok){
         throw new Error('Error al marcar tarea')

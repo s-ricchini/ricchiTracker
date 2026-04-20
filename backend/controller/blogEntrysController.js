@@ -5,9 +5,10 @@ export class BlogEntysController{
     static async getAllEntrys(req,res){
         
         const {id} = req.params
-        
+        const userId = req.session.id
+
         // data = rows o una lista vacia
-        const data = await BlogEntrysModel.getAllEntrys(id)
+        const data = await BlogEntrysModel.getAllEntrys(userId,id)
 
         if(!data){
             return res.status(400).send()
@@ -20,9 +21,10 @@ export class BlogEntysController{
     static  async deleteEntry(req,res){
 
         const id = req.params.id
+        const userId = req.session.id
         
         try {
-            const result = await BlogEntrysModel.deleteEntry(id)
+            const result = await BlogEntrysModel.deleteEntry(userId,id)
             res.status(200).send()
 
 
@@ -36,10 +38,13 @@ export class BlogEntysController{
 
     //devuelve la entry entera
     static async createEntry(req,res) {
+        
         const {file_id,title,content} = req.body
+        const userId = req.session.id
+        
 
         try {
-            const newEntry = await BlogEntrysModel.createEntry(file_id,title,content)
+            const newEntry = await BlogEntrysModel.createEntry(userId,file_id,title,content)
             return res.status(201).json(newEntry)
 
         } catch (error) {
@@ -53,9 +58,10 @@ export class BlogEntysController{
     static async modifyEntry(req,res){
         const {id} = req.params
         const {title,content} = req.body
+        const userId = req.session.id
 
         try {
-            const modifiedEntry = await BlogEntrysModel.modifyEntry(id,title,content)
+            const modifiedEntry = await BlogEntrysModel.modifyEntry(userId,id,title,content)
             return res.status(200).json(modifiedEntry)
 
         } catch (error) {

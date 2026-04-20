@@ -1,0 +1,17 @@
+###crear usuario 1
+POST http://localhost:1234/auth/register
+Content-Type: application/json
+
+{
+    "username": "hola",
+    "password": "hola"
+}
+
+###crear usuario
+POST http://localhost:1234/auth/register
+Content-Type: application/json
+
+{
+    "username": "claudia",
+    "password": "claudia"
+}

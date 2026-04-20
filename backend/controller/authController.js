@@ -1,6 +1,9 @@
 import AuthModel from "../models/authModel/authModel.js";
+import jwt from "jsonwebtoken"
+
 
 export default class AuthController{
+
 
     static async register(req,res){
         const {username,password} = req.body
@@ -42,6 +45,7 @@ export default class AuthController{
 
             return res
         } catch (err) {
+            console.error(err)
             if (err.message === "Invalid credentials") {
                 return res.status(401).json({ error: err.message });
             }

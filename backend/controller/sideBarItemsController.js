@@ -3,7 +3,9 @@ import { sideBarItemsModel } from "../models/SideBarItems/sql/sideBarItemsModel.
 export class SideBarItemsController{
     
     static async getAll(req,res){
-        const data = await sideBarItemsModel.getAll();
+
+        const userId = req.session.id
+        const data = await sideBarItemsModel.getAll(userId);
         return res.status(200).json(data);
     };
 
@@ -11,8 +13,9 @@ export class SideBarItemsController{
 
     static async addItem(req,res){
        const data = req.body
-        
-       const newItem = await sideBarItemsModel.addItem(data);
+       const userId = req.session.id 
+
+       const newItem = await sideBarItemsModel.addItem(userId,data);
        
        if(newItem){
             return res.status(201).json(newItem)
@@ -22,7 +25,8 @@ export class SideBarItemsController{
 
     
     static async modifyItem(req,res){
-        const newitem = await sideBarItemsModel.modifyItem(req.body)
+        const userId = req.session.id
+        const newitem = await sideBarItemsModel.modifyItem(userId,req.body)
 
         if(newitem){
             return res.status(200).json(newitem);
@@ -34,8 +38,9 @@ export class SideBarItemsController{
 
     static async deleteItem(req,res){
         const id = req.params.id;
+        const userId = req.session.id
 
-        const deletedItem = await sideBarItemsModel.deleteItem(id);
+        const deletedItem = await sideBarItemsModel.deleteItem(userId,id);
 
         if(deletedItem){
             return res.status(200).send()

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import protectedRoute from "../middlewares/protectedRoute.js";
 
 import { TodoListController } from "../controller/todoListController.js";
 
@@ -9,10 +10,10 @@ import { TodoListModel } from "../models/todoList/todoListModel.js";
 
 export const todoListRouter = Router()
 
-todoListRouter.get("/",TodoListController.getTasksTodayAndTomorrow)
+todoListRouter.get("/",protectedRoute,TodoListController.getTasksTodayAndTomorrow)
 
-todoListRouter.post("/",TodoListController.createTask)
+todoListRouter.post("/",protectedRoute,TodoListController.createTask)
 
-todoListRouter.delete('/:id',TodoListController.deleteTask)
+todoListRouter.delete('/:id',protectedRoute,TodoListController.deleteTask)
 
-todoListRouter.patch('/:id',TodoListController.toggleCheck)
+todoListRouter.patch('/:id',protectedRoute,TodoListController.toggleCheck)
