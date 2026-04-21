@@ -1,6 +1,6 @@
 import { pool } from "../../db/connection.js";
 import bcrypt from 'bcrypt' 
-
+import crypto from "crypto"
 
 export default class AuthModel{
 
@@ -54,6 +54,53 @@ export default class AuthModel{
         } catch (err) {
             throw err;
         }
+    }
+
+    static async newRefreshToken(userId,newToken){
+        //busco si el usuario ya tiene un refreshToken -> si lo tiene lo borro
+        //encripto el nuevo token -> lo inserto en la db
+        try {
+            await pool.query("DELETE from refreshTokens WHERE user_id = UUID_TO_BIN(?)",[userId])
+
+            const hash = crypto.createHash('sha256').update(newToken).digest('hex')
+
+            await pool.query('INSERT into refreshTokens (user_id,token) VALUES (UUID_TO_BIN(?),?)',[userId,hash])
+
+
+        } catch (error) {
+            console.error(error)
+            throw error
+            
+        }
+    }
+
+    static async deleteToken(hash){
+        try {
+            await pool.query("DELETE from refreshTokens WHERE token = ?",[hash])
+
+
+        } catch (error) {
+            console.error(error)
+            throw error
+        }
+
+    }
+
+    static async validToken(hash){
+        try {
+            const [rows] = await pool.query("SELECT * from refreshTokens WHERE token = ?",[hash])
+
+            if(!rows){
+                throw new Error("Invalid token")
+            }
+
+            return true;
+            
+        } catch (error) {
+            console.error(error)
+            throw error
+        }    
+
     }
 
     

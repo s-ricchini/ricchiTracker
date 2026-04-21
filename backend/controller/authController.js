@@ -31,15 +31,26 @@ export default class AuthController{
 
             const user = await AuthModel.login(username, password);
 
-            const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" });
+            const access_token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "10m" });
+            const refresh_token = jwt.sign(user, process.env.JWT_SECRET, {expiresIn:"90d"})
+
+            //inserto el refresh token a la db
+            const result = await AuthModel.newRefreshToken(user.id,refresh_token)
 
             res
-                .cookie("access_token", token, {
+                .cookie("access_token", access_token, {
                     httpOnly: true,
                     secure: false, //cambiar en prod
                     sameSite: "lax",
-                    maxAge: 1000 * 60 * 60, // 1 hora en ms
+                    maxAge: 1000 * 60 * 10, // 10 mins en ms
                 })
+                .cookie("refresh_token",refresh_token,{
+                    httpOnly: true,
+                    secure: false, //cambiar en prod
+                    sameSite: "lax",
+                    maxAge: 1000 * 60 * 60 * 24 * 90, // 90 dias en ms
+                })
+
                 .status(202)
                 .json({username: user.username });
 
@@ -53,22 +64,81 @@ export default class AuthController{
         }
     }
 
-    static logout(req, res) {
-        const token = req.cookies.access_token;
+    static async logout(req, res) {
+        const acces_token = req.cookies.access_token;
+        const refresh_token = req.cookies.refresh_token
 
-        if (!token) {
-            return res.status(200).send()
+        try {
+            if (refresh_token) {
+                //lo busco por el hash por si luego quiero implenetar multi dispositivo
+                const hash = crypto.createHash('sha256').update(refresh_token).digest('hex')
+                await AuthModel.deleteRefreshToken(hash)
+            
+            }
+            
+            res
+                .clearCookie("access_token", {
+                    httpOnly: true,
+                    secure: false,
+                    sameSite: "lax",
+                })
+                .clearCookie("refresh_token", {
+                    httpOnly: true,
+                    secure: false,
+                    sameSite: "lax",
+                })
+                .status(200).send();
+        
+            return res
+            
+        } catch (error) {
+            console.error(error)
+            return res.status(500).json({error:"internal server error"})            
         }
 
-        res
-            .clearCookie("access_token", {
-                httpOnly: true,
-                secure: false,
-                sameSite: "lax",
-            })
-            .status(200).send();
-    
-        return res
+    }
+
+    static async refresh(req,res){
+       const refresh_token = req.cookies.refresh_token
+
+        if (!refresh_token) {
+            return res.status(401).json({ error: "No token provided" });
+        }
+
+        try {
+            //veo que el refresh token no haya expirado
+            const payload = jwt.verify(refresh_token, process.env.JWT_SECRET);
+            const user = {id: payload.id, username:payload.username}
+
+
+            //verifico que este en la db
+            const hash = crypto.createHash('sha256').update(refresh_token).digest('hex')
+            const inDb = await AuthModel.validToken(hash)            
+
+            if (!inDb){
+                return res.status(401).json({error:"Invalid Token"})
+            }
+
+            const newAccess_token = jwt.sign(user,process.env.JWT_SECRET,{expiresIn:"10m"})
+
+            res.clearCookie("access_token", {
+                    httpOnly: true,
+                    secure: false,
+                    sameSite: "lax",
+                })
+                .cookie("access_token", newAccess_token , {
+                    httpOnly: true,
+                    secure: false, //cambiar en prod
+                    sameSite: "lax",
+                    maxAge: 1000 * 60 * 10, // 10 mins en ms
+                })
+                .status(200).send()
+
+
+        } catch (err) {
+            return res.status(401).json({error: "Invalid Token"})
+        }
+
     }
 
 }
