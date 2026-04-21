@@ -65,3 +65,11 @@ CREATE TABLE tasks (
         REFERENCES users(id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE refreshTokens (
+    id        INT PRIMARY KEY AUTO_INCREMENT,
+    user_id   binary(16) NOT NULL,
+    token     VARCHAR(512) NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
