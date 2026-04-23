@@ -1,6 +1,7 @@
 import AuthModel from "../models/authModel/authModel.js";
 import jwt from "jsonwebtoken"
 
+import { createHash } from 'crypto'
 
 export default class AuthController{
 
@@ -71,8 +72,8 @@ export default class AuthController{
         try {
             if (refresh_token) {
                 //lo busco por el hash por si luego quiero implenetar multi dispositivo
-                const hash = crypto.createHash('sha256').update(refresh_token).digest('hex')
-                await AuthModel.deleteRefreshToken(hash)
+                const hash = createHash('sha256').update(refresh_token).digest('hex')
+                await AuthModel.deleteToken(hash)
             
             }
             
@@ -112,7 +113,7 @@ export default class AuthController{
 
 
             //verifico que este en la db
-            const hash = crypto.createHash('sha256').update(refresh_token).digest('hex')
+            const hash = createHash('sha256').update(refresh_token).digest('hex')
             const inDb = await AuthModel.validToken(hash)            
 
             if (!inDb){

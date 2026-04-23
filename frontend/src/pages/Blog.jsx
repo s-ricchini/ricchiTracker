@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom"
 import { useSideBarContext } from "../contexts/SideBarProvider"
 import { useNavigate } from "react-router-dom"
 
+import authFetch from "../functions/authFetch"
+
+
 import NavBar from "../features/navbar/NavBar"
 import FullSideBar from "../features/sideBar/FullSideBar"
 import EntryList from "../features/blog/EntryList"
@@ -38,15 +41,10 @@ function Blog(){
             setEntrys([])
             
             try {
-                const response = await fetch(`http://localhost:1234/blog/${fileId}`, {
-                    credentials:"include",
-                })
-                
-                if (response.status === 401){
-                    navigate("/login");
-                    return;
-                }
-
+                const response = await authFetch(`http://localhost:1234/blog/${fileId}`, {
+                    method:"GET",
+                },navigate)
+ 
                 if(!response.ok){
                     throw new Error("Error en el get de blog entrys")
                 }
@@ -66,19 +64,13 @@ function Blog(){
     
     async function createEntry(title, content) {
         try {
-            const response = await fetch(`http://localhost:1234/blog/`, {
+            const response = await authFetch(`http://localhost:1234/blog/`, {
                 method: 'POST',
-                credentials: "include",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ file_id: fileId,title:title, content:content }),
-            });
-
-            if (response.status === 401){
-                navigate("/login");
-                return;
-            }
+            },navigate);
 
             if (!response.ok) throw new Error('Error al crear la entry');
 
@@ -93,13 +85,8 @@ function Blog(){
 
     async function deleteEntry(id) {
         try {
-            const response = await fetch(`http://localhost:1234/blog/${id}`,{method:"DELETE"})
+            const response = await authFetch(`http://localhost:1234/blog/${id}`,{method:"DELETE"},navigate)
             
-            if (response.status === 401){
-                navigate("/login");
-                return;
-            }
-
             if(!response.ok){
                 throw new Error("Error en el fetch para borrar la entry")
             }
@@ -124,17 +111,11 @@ function Blog(){
         ))
 
         try {
-            const response = await fetch(`http://localhost:1234/blog/${id}`, {
+            const response = await authFetch(`http://localhost:1234/blog/${id}`, {
                 method: "PATCH",
-                credentials:"include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title: newTitle, content: newContent })
-            })
-
-            if (response.status === 401){
-                navigate("/login");
-                return;
-            }
+            },navigate)
 
             if (!response.ok) throw new Error("Error al modificar la entrada")
 

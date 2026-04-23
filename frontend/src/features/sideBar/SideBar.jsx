@@ -3,6 +3,7 @@ import SideBaritem from "./SideBarItem"
 import MenuBars from "../../assets/icons/MenuBars"
 import ContextMenu from "./ContextMenu"
 import { useNavigate } from "react-router-dom"
+import authFetch from "../../functions/authFetch"
 
 
 import { useState,useMemo,useEffect } from "react"
@@ -28,14 +29,9 @@ function OpenSideBar({toggleSideBar}){
         const fetchSidebarData = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch("http://localhost:1234/items",{
-                    credentials:"include",
-                });
-
-                if (response.status === 401){
-                    navigate("/login");
-                   return;
-                }
+                const response = await authFetch("http://localhost:1234/items",{
+                    method:"GET",
+                },navigate);
 
                 const data = await response.json();
                 console.log(data)
@@ -119,15 +115,9 @@ function OpenSideBar({toggleSideBar}){
         }
 
         try {
-            const response = await fetch(`http://localhost:1234/items/${id}`, {
-                credentials:"include",
+            const response = await authFetch(`http://localhost:1234/items/${id}`, {
                 method: 'DELETE',
-            });
-
-            if (response.status === 401){
-                navigate("/login");
-                return;
-            }
+            },navigate);
 
             if (!response.ok) {
                 throw new Error('Error al eliminar en el servidor');
@@ -163,19 +153,14 @@ function OpenSideBar({toggleSideBar}){
         const changes = {id:id,color:newColor}
 
         try {
-            const response = await fetch('http://localhost:1234/items', {
+            const response = await authFetch('http://localhost:1234/items', {
                 method: 'PATCH',
-                credentials:"include",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(changes),
-            })
+            },navigate)
 
-            if (response.status === 401){
-                navigate("/login");
-                return;
-            }
 
             if (!response.ok) {
                 throw new Error('Error al guardar en la base de datos');
@@ -219,19 +204,13 @@ function OpenSideBar({toggleSideBar}){
         const changes = {id:id,is_open:newstate}
 
         try {
-            const response = await fetch('http://localhost:1234/items', {
+            const response = await authFetch('http://localhost:1234/items', {
                 method: 'PATCH',
-                credentials:"include",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(changes),
-            })
-
-            if (response.status === 401){
-                navigate("/login");
-                return;
-            }
+            },navigate)
 
             if (!response.ok) {
                 throw new Error('Error al guardar en la base de datos');
@@ -281,19 +260,13 @@ function OpenSideBar({toggleSideBar}){
         const changes = {id:id,name:newName}
 
         try {
-            const response = await fetch('http://localhost:1234/items', {
+            const response = await authFetch('http://localhost:1234/items', {
                 method: 'PATCH',
-                credentials:"include",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(changes),
-            })
-
-            if (response.status === 401){
-                navigate("/login");
-                return;
-            }
+            },navigate)
 
             if (!response.ok) {
                 throw new Error('Error al guardar en la base de datos');
@@ -337,20 +310,13 @@ function OpenSideBar({toggleSideBar}){
         setRowData(prevData => [...prevData, newItem]);
 
         try {
-            const response = await fetch('http://localhost:1234/items', {
+            const response = await authFetch('http://localhost:1234/items', {
                 method: 'POST',
-                credentials:'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(newItem),
-            });
-
-            if (response.status === 401){
-                navigate("/login");
-                return;
-            }
-
+            },navigate);
 
             if (!response.ok) {
                 throw new Error('Error al guardar en la base de datos');

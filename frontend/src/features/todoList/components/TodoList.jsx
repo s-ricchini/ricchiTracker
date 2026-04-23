@@ -3,6 +3,7 @@ import TaskList from "./TaskList";
 import AddTaskForm from "./AddTaskForm";
 import { useNavigate } from "react-router-dom";
 
+import authFetch from "../../../functions/authFetch";
 
 
 function TodoList() {
@@ -25,14 +26,10 @@ function TodoList() {
 
       const fetchTaskData = async (from,to) => {
           try {
-              const response = await fetch(`http://localhost:1234/tasks?from=${from}&to=${to}`,{
-                credentials:"include",
-              });
-              
-              if (response.status === 401){
-                  navigate("/login");
-                  return;
-              }
+              const response = await authFetch(`http://localhost:1234/tasks?from=${from}&to=${to}`,{
+                method:"GET",
+              },navigate);
+            
              
               const data = await response.json();
               setTasks(data)
@@ -81,20 +78,13 @@ function TodoList() {
     }
 
     try {
-      const response = await fetch("http://localhost:1234/tasks", {
+      const response = await authFetch("http://localhost:1234/tasks", {
           method: "POST",
-          credentials:"include",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(reqBody),
-        }
-      );
-
-      if (response.status === 401){
-        navigate("/login");
-        return;
-      }
+        },navigate);
 
       if(!response.ok){
         throw new Error('Error al crear tarea')
@@ -119,15 +109,9 @@ function TodoList() {
     setTasks(tasks => tasks.filter( task => task.id !== id));
 
     try {
-      const response = await fetch(`http://localhost:1234/tasks/${id}`, {
-          method: "DELETE",
-          credentials:"include", });
+      const response = await authFetch(`http://localhost:1234/tasks/${id}`, {
+          method: "DELETE",},navigate);
       
-      if (response.status === 401){
-          navigate("/login");
-          return;
-      }
-
       if (!response.ok){
         throw new Error("Error al borrar tarea")
 
@@ -146,20 +130,14 @@ function TodoList() {
 
   async function handleCheck(id,newState){
     try {
-      const response = await fetch(`http://localhost:1234/tasks/${id}`, {
+      const response = await authFetch(`http://localhost:1234/tasks/${id}`, {
           method: "PATCH", 
-          credentials:"include",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({newState:newState}),
-        }
-      );
+        },navigate);
 
-      if (response.status === 401){
-          navigate("/login");
-          return;
-      }
 
       if(!response.ok){
         throw new Error('Error al marcar tarea')

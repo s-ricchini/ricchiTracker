@@ -1,8 +1,7 @@
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 
-export function Register() {
-    const navigate = useNavigate();
+
+export function Register({goToLogin}) {
     const { register, handleSubmit, watch, setError, formState: { errors } } = useForm();
     const password = watch("password");
 
@@ -21,7 +20,7 @@ export function Register() {
                 return;
             }
 
-            navigate("/login");
+            goToLogin();
         } catch (err) {
             setError("root", { message: "Server error" });
         }
