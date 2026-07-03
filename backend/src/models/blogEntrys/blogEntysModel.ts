@@ -1,10 +1,13 @@
 import { pool } from "../../db/connection.js";
 
+import type { ResultSetHeader, RowDataPacket } from "mysql2";
+import type { UUID,BlogEntry } from "../../types/allTypes.js";
+
 
 export class BlogEntrysModel{
-    static async getAllEntrys(userId,fileId) {
+    static async getAllEntrys(userId: UUID ,fileId:UUID) : Promise<BlogEntry[]> {
         try {
-            const [rows] = await pool.query(
+            const [rows] = await pool.query<RowDataPacket[] & BlogEntry[]>(
                 `SELECT 
                     BIN_TO_UUID(id) as id, 
                     BIN_TO_UUID(file_id) as file_id, 
@@ -26,10 +29,10 @@ export class BlogEntrysModel{
         }
     }
 
-    static async deleteEntry(userId,id){
+    static async deleteEntry(userId:UUID,id:UUID) : Promise<boolean>{
         try {
             console.log(`intentando borrar entry: ${id}`)
-            const [result] = await pool.query('DELETE FROM blog_entrys WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?)',[userId,id])
+            const [result] = await pool.query<ResultSetHeader>('DELETE FROM blog_entrys WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?)',[userId,id])
             
             if (result.affectedRows === 0){
                 throw new Error("invalid id")
@@ -45,21 +48,21 @@ export class BlogEntrysModel{
 
     }
 
-    static async createEntry(userId,file_id,title,content){
+    static async createEntry(userId:UUID,file_id:UUID,title:string,content:string):Promise<BlogEntry>{
         
         const id = crypto.randomUUID()
         try {
-            const [result] = await pool.query("INSERT INTO blog_entrys (id,user_id,file_id,title,content) VALUES (UUID_TO_BIN(?),UUID_TO_BIN(?),UUID_TO_BIN(?),?,?);", [id,userId,file_id,title,content])
+            const [result] = await pool.query<ResultSetHeader>("INSERT INTO blog_entrys (id,user_id,file_id,title,content) VALUES (UUID_TO_BIN(?),UUID_TO_BIN(?),UUID_TO_BIN(?),?,?);", [id,userId,file_id,title,content])
 
             if(result.affectedRows === 0){
                 throw new Error('Error en la query')
             }
 
             //busco el item que cree
-            const [rows] = await pool.query("SELECT BIN_TO_UUID(id) as id,BIN_TO_UUID(file_id) as file_id,title,content,created_at FROM blog_entrys WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?);",[userId,id] )
+            const [rows] = await pool.query<RowDataPacket[] & BlogEntry[]>("SELECT BIN_TO_UUID(id) as id,BIN_TO_UUID(file_id) as file_id,title,content,created_at FROM blog_entrys WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?);",[userId,id] )
             console.log(rows[0])
             
-            return rows[0]
+            return rows[0]!
             
 
         } catch (error) {
@@ -69,24 +72,23 @@ export class BlogEntrysModel{
 
     }
 
-    static async modifyEntry(userId,id,title,content){
+    static async modifyEntry(userId:UUID,id:UUID,title:string,content:string): Promise<BlogEntry>{
         try {
             
-            const [result] = await pool.query("UPDATE blog_entrys SET title = ?, content = ? WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?);",[title,content,userId,id])
+            const [result] = await pool.query<ResultSetHeader>("UPDATE blog_entrys SET title = ?, content = ? WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?);",[title,content,userId,id])
             if (result.affectedRows === 0){
                 throw new Error("Id not found")
             }
 
             //busco el item que modifique
-            const [rows] = await pool.query("SELECT BIN_TO_UUID(id) as id,BIN_TO_UUID(file_id) as file_id,title,content,created_at FROM blog_entrys WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?);",[userId,id] )
+            const [rows] = await pool.query<RowDataPacket[] & BlogEntry[]>("SELECT BIN_TO_UUID(id) as id,BIN_TO_UUID(file_id) as file_id,title,content,created_at FROM blog_entrys WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?);",[userId,id] )
             console.log(rows[0])
-            return rows[0]
+            return rows[0]!
 
         } catch (error) {
             console.error(error)
             throw error;
         }
-
 
     }
 }

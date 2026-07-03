@@ -1,14 +1,19 @@
 import { BlogEntrysModel } from "../models/blogEntrys/blogEntysModel.js"
+import type { Request,Response } from "express"
+import type { UUID } from "../types/allTypes.js"
 
 export class BlogEntysController{
     
-    static async getAllEntrys(req,res){
-        
+    static async getAllEntrys(req:Request,res:Response){
         const {id} = req.params
-        const userId = req.session.id
+        const userId = req.session!.id
+
+        if(!id){
+            return res.status(400).send()
+        }
 
         // data = rows o una lista vacia
-        const data = await BlogEntrysModel.getAllEntrys(userId,id)
+        const data = await BlogEntrysModel.getAllEntrys(userId,id as UUID)
 
         if(!data){
             return res.status(400).send()
@@ -18,15 +23,21 @@ export class BlogEntysController{
 
     }
 
-    static  async deleteEntry(req,res){
+    static  async deleteEntry(req:Request,res:Response){
 
         const id = req.params.id
-        const userId = req.session.id
+        if(!id){
+            throw new Error("No id")
+        }
+
+        const userId = req.session!.id
         
         try {
-            const result = await BlogEntrysModel.deleteEntry(userId,id)
-            res.status(200).send()
-
+            const result = await BlogEntrysModel.deleteEntry(userId,id as UUID)
+            
+            if(result){
+                res.status(200).send()   
+            }
 
         } catch (error) {
             res.status(404).send()
@@ -37,10 +48,10 @@ export class BlogEntysController{
     }
 
     //devuelve la entry entera
-    static async createEntry(req,res) {
+    static async createEntry(req:Request,res:Response) {
         
         const {file_id,title,content} = req.body
-        const userId = req.session.id
+        const userId = req.session!.id
         
 
         try {
@@ -55,13 +66,19 @@ export class BlogEntysController{
 
     }
 
-    static async modifyEntry(req,res){
+    static async modifyEntry(req:Request,res:Response){
         const {id} = req.params
+
+        if(!id){
+            res.status(404).send()
+        }
+
+        //ya se valida en zod
         const {title,content} = req.body
-        const userId = req.session.id
+        const userId = req.session!.id
 
         try {
-            const modifiedEntry = await BlogEntrysModel.modifyEntry(userId,id,title,content)
+            const modifiedEntry = await BlogEntrysModel.modifyEntry(userId,id as UUID,title,content)
             return res.status(200).json(modifiedEntry)
 
         } catch (error) {
