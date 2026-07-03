@@ -1,5 +1,4 @@
 import { Router } from "express";
-import protectedRoute from "../middlewares/protectedRoute.js";
 
 import AuthController from "../controller/authController.js";
 

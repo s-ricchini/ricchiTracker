@@ -1,19 +1,25 @@
 import AuthModel from "../models/authModel/authModel.js";
 import jwt from "jsonwebtoken"
 
+import type { Request,Response } from "express";
+import type { UserCredentials,TokenPayload } from "../types/allTypes.js";
+
 import { createHash } from 'crypto'
 
 export default class AuthController{
 
 
-    static async register(req,res){
-        const {username,password} = req.body
+    static async register(req:Request,res:Response){
+        const {username,password} = req.body as UserCredentials
         
         try {
             const created = await AuthModel.register(username,password)
-            return res.status(201).send()
+            
+            if(created){
+                return res.status(201).send()
+            }
 
-        } catch (error) {
+        } catch (error:any) {
             if(error.message === "Username already taken"){
                 return res.status(400).json({error:"Username already taken"})
             } 
@@ -21,24 +27,21 @@ export default class AuthController{
             return res.status(500).json({error:"Internal server error"})
 
         }
-
-
-
     }
 
-    static async login(req, res) {
+    static async login(req:Request, res:Response) {
         try {
-            const { username, password } = req.body;
+            const { username, password } = req.body as UserCredentials;
 
             const user = await AuthModel.login(username, password);
 
-            const access_token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "10m" });
-            const refresh_token = jwt.sign(user, process.env.JWT_SECRET, {expiresIn:"90d"})
+            const access_token = jwt.sign(user, process.env.JWT_SECRET!, { expiresIn: "10m" });
+            const refresh_token = jwt.sign(user, process.env.JWT_SECRET!, {expiresIn:"90d"});
 
             //inserto el refresh token a la db
-            const result = await AuthModel.newRefreshToken(user.id,refresh_token)
+           await AuthModel.newRefreshToken(user.id,refresh_token)
 
-            res
+            return res
                 .cookie("access_token", access_token, {
                     httpOnly: true,
                     secure: false, //cambiar en prod
@@ -55,8 +58,8 @@ export default class AuthController{
                 .status(202)
                 .json({username: user.username });
 
-            return res
-        } catch (err) {
+
+        } catch (err:any) {
             console.error(err)
             if (err.message === "Invalid credentials") {
                 return res.status(401).json({ error: err.message });
@@ -65,9 +68,8 @@ export default class AuthController{
         }
     }
 
-    static async logout(req, res) {
-        const acces_token = req.cookies.access_token;
-        const refresh_token = req.cookies.refresh_token
+    static async logout(req:Request, res:Response) {
+        const refresh_token = req.cookies.refresh_token as string
 
         try {
             if (refresh_token) {
@@ -99,8 +101,8 @@ export default class AuthController{
 
     }
 
-    static async refresh(req,res){
-       const refresh_token = req.cookies.refresh_token
+    static async refresh(req:Request,res:Response){
+       const refresh_token = req.cookies?.refresh_token
 
         if (!refresh_token) {
             return res.status(401).json({ error: "No token provided" });
@@ -108,7 +110,7 @@ export default class AuthController{
 
         try {
             //veo que el refresh token no haya expirado
-            const payload = jwt.verify(refresh_token, process.env.JWT_SECRET);
+            const payload = jwt.verify(refresh_token, process.env.JWT_SECRET!) as TokenPayload;
             const user = {id: payload.id, username:payload.username}
 
 
@@ -120,7 +122,7 @@ export default class AuthController{
                 return res.status(401).json({error:"Invalid Token"})
             }
 
-            const newAccess_token = jwt.sign(user,process.env.JWT_SECRET,{expiresIn:"10m"})
+            const newAccess_token = jwt.sign(user,process.env.JWT_SECRET!,{expiresIn:"10m"})
 
             res.clearCookie("access_token", {
                     httpOnly: true,
